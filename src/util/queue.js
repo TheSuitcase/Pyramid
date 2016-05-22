@@ -1,11 +1,14 @@
 import Uid from 'thesuitcase-uid'
-import Pyramid from './index'
 import Util from 'util'
 
 class Queue {
   constructor () {
     this.queue = []
     this.isActive = false
+  }
+
+  get () {
+    return this.queue
   }
 
   clear () {

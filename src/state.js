@@ -1,38 +1,31 @@
-import Chalk from 'chalk'
-import Queue from './Queue'
+import Colors from './colors'
+import Util from 'util'
+import State from './util/state'
 
-let state = {
-  queue: new Queue(),
-  version: undefined,
-  directories: [],
+export default new State({
+  actions: [],
+  errors: [],
+
+  command: undefined,
   commands: {},
-  autocomplete: true,
-  color: {
-    default: undefined,
-    error: undefined,
-    warning: undefined,
-    success: undefined,
-  },
-  delimiter: {
-    default: undefined,
-    error: undefined,
-    warning: undefined,
-    success: undefined,
-  },
-  welcome: undefined,
-  goodby: undefined,
-  callbacks: {
-    overflow: undefined,
-    ui: undefined,
-    action: undefined,
-  },
 
-  getDelimiter(type = 'default') {
-    let delimiter = this.delimiter[type] || this.delimiter.default
-    let color = this.color[type] || this.color.default
-    return Chalk[color](delimiter)
+  // User settings
+  help: true,
+  autocomplete: false,
+  version: '0.0.0',
+
+  delimiters: {
+    default: '',
+    error: undefined,
+    success: undefined,
+    warning: undefined,
+  },
+  colors: {
+    text: Colors.white,
+    error: Colors.red,
+    success: Colors.green,
+    warning: Colors.yellow,
+    blur: Colors.gray,
+    hightlight: Colors.yellow
   }
-}
-
-export default state
-module.exports = state
+})

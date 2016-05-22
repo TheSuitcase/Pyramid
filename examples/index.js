@@ -1,50 +1,96 @@
-'use strict'
-let pyramid = require('../dist')
-let state = require('../dist/state')
+var pyramid = require('../dest')
 
 pyramid
   .version('0.0.1')
-  .delimiter('[Pyramid]')
-  .color({
-    default: 'yellow',
-    success: 'green',
-    error: 'red',
-    warning: 'cyan'
+
+var c = pyramid
+  .command('run')
+  .required('instance', 'description 1')
+
+  .optional('instance', {
+    description: 'description 2',
+    validate: false
   })
-  .welcome('Welcome to Pyramid exaples!')
-  .goodby('Check out the documentation at: https://github.com/thesuitcase/pyramid')
 
-pyramid
-  .command('run', 'Try out the password UI!')
-  .password()
-  // .linebreak()
-  .log('Welcome to the run command!.')
-
-  .action((type, answer, cb) => {
-    // console.log(type, answer)
-    if (type === 'password') {
-      pyramid.log('Thank you for your password')
+  .required({
+    instance: {
+      description: 'test'
+    },
+    os: {
+      description: 'desc'
     }
-    cb()
   })
 
-pyramid
-  .command('hello', 'Try out the hello UI!')
-  .log('Hello there!')
+  .option('-n --N -new', 'description')
 
-pyramid
-  .parse()
-  .on('exit', () => {
-    // console.log('Pyramid did exit!')
+  .option('-n --N -new', {
+    value: true,
+    validate() {
+      return true
+    }
   })
 
-  // pyramid.addAction('exit', (api) => {
-  //    api:
-  //     {
-  //       command: [Command],
-  //       pyramid: [Pyramid],
-  //       arguments: [Array]
-  //       cb: [Function]
-  //     }
+  .option({
+    '-n --N -new': {
+      description: 'test'
+    }
+  })
 
-  // })
+console.log(c)
+
+// console.log(pyramid.State)
+//   .delimiter('[Pyramid]')
+//   .color('white')
+//   .interactive()
+//   // .debug()
+//   .autocomplete(true)
+
+// pyramid.log('hello')
+
+// var c = pyramid
+//   .command('run')
+
+//   .required('instance', 'description 1')
+
+//   .required('instance', {
+//     description: 'description 2',
+//     validate: false
+//   })
+
+//   .optional({
+//     instance: {
+//       description: 'test'
+//     },
+//     os: {
+//       description: 'desc'
+//     }
+//   })
+
+//   .option('-n --N -new', 'description')
+
+//   .option('-n --N -new', {
+//     value: true,
+//     validate() {
+//       return true
+//     }
+//   })
+
+//   .option({
+//     '-n --N -new': {
+//       description: 'test'
+//     }
+//   })
+
+//   .log('Runninnnnnnng')
+
+// pyramid
+//   .command('rain')
+
+// pyramid
+//   .command('ruine')
+
+// pyramid
+//   .command('rest')
+
+// pyramid
+//   .parse()

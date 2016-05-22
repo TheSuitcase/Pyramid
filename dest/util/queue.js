@@ -10,10 +10,6 @@ var _thesuitcaseUid = require('thesuitcase-uid');
 
 var _thesuitcaseUid2 = _interopRequireDefault(_thesuitcaseUid);
 
-var _index = require('./index');
-
-var _index2 = _interopRequireDefault(_index);
-
 var _util = require('util');
 
 var _util2 = _interopRequireDefault(_util);
@@ -31,6 +27,11 @@ var Queue = (function () {
   }
 
   _createClass(Queue, [{
+    key: 'get',
+    value: function get() {
+      return this.queue;
+    }
+  }, {
     key: 'clear',
     value: function clear() {
       this.queue = [];

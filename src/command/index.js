@@ -9,7 +9,6 @@ import Syntax from './syntax'
 import Help from './help'
 import Parameters from './parameters'
 import Arguments from './arguments'
-import Errors from './errors'
 
 class Command {
   constructor (command) {
@@ -18,12 +17,13 @@ class Command {
     this.state = {
       command: command,
       description: undefined,
+      docs: undefined,
+      example: undefined,
 
       syntax: new Syntax(this),
       help: new Help(this),
       parameters: new Parameters(this),
       arguments: new Arguments(this),
-      errors: new Errors(),
 
       // Store the order of actions.
       actions: new Queue(),
@@ -55,11 +55,11 @@ class Command {
   }
 
   parse (args) {
-    this.state.arguments.generate()
+    this.state.arguments.generate(args)
     this.state.syntax.generate()
     this.state.help.generate()
 
-    return this.state.arguments
+    return this
   }
 
   /*
@@ -68,6 +68,18 @@ class Command {
   description (description) {
     if (!TypeOf(description, 'string', 'undefined')) { return this; }
     this.state.description = description
+    return this
+  }
+
+  docs (docs) {
+    if (!TypeOf(docs, 'string')) { return this; }
+    this.state.docs = docs
+    return this
+  }
+
+  example (example) {
+    if (!TypeOf(example, 'string')) { return this; }
+    this.state.example = example
     return this
   }
 

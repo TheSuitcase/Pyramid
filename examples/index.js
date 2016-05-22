@@ -5,6 +5,8 @@ pyramid
 
 var c = pyramid
   .command('run')
+  .docs('http://github.com/thesuitcase/pyramid')
+  .example('run myinstance hello')
   .required('instance', 'description 1')
 
   .optional('instance', {
@@ -36,61 +38,65 @@ var c = pyramid
     }
   })
 
-console.log(c)
+process.argv.splice(0, 2)
+c
+  .parse(process.argv)
 
-// console.log(pyramid.State)
-//   .delimiter('[Pyramid]')
-//   .color('white')
-//   .interactive()
-//   // .debug()
-//   .autocomplete(true)
+  // console.log(c)
 
-// pyramid.log('hello')
+  // console.log(pyramid.State)
+  //   .delimiter('[Pyramid]')
+  //   .color('white')
+  //   .interactive()
+  //   // .debug()
+  //   .autocomplete(true)
 
-// var c = pyramid
-//   .command('run')
+  // pyramid.log('hello')
 
-//   .required('instance', 'description 1')
+  // var c = pyramid
+  //   .command('run')
 
-//   .required('instance', {
-//     description: 'description 2',
-//     validate: false
-//   })
+  //   .required('instance', 'description 1')
 
-//   .optional({
-//     instance: {
-//       description: 'test'
-//     },
-//     os: {
-//       description: 'desc'
-//     }
-//   })
+  //   .required('instance', {
+  //     description: 'description 2',
+  //     validate: false
+  //   })
 
-//   .option('-n --N -new', 'description')
+  //   .optional({
+  //     instance: {
+  //       description: 'test'
+  //     },
+  //     os: {
+  //       description: 'desc'
+  //     }
+  //   })
 
-//   .option('-n --N -new', {
-//     value: true,
-//     validate() {
-//       return true
-//     }
-//   })
+  //   .option('-n --N -new', 'description')
 
-//   .option({
-//     '-n --N -new': {
-//       description: 'test'
-//     }
-//   })
+  //   .option('-n --N -new', {
+  //     value: true,
+  //     validate() {
+  //       return true
+  //     }
+  //   })
 
-//   .log('Runninnnnnnng')
+  //   .option({
+  //     '-n --N -new': {
+  //       description: 'test'
+  //     }
+  //   })
 
-// pyramid
-//   .command('rain')
+  //   .log('Runninnnnnnng')
 
-// pyramid
-//   .command('ruine')
+  // pyramid
+  //   .command('rain')
 
-// pyramid
-//   .command('rest')
+  // pyramid
+  //   .command('ruine')
 
-// pyramid
-//   .parse()
+  // pyramid
+  //   .command('rest')
+
+  // pyramid
+  //   .parse()

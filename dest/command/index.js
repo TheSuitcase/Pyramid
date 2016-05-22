@@ -42,10 +42,6 @@ var _arguments = require('./arguments');
 
 var _arguments2 = _interopRequireDefault(_arguments);
 
-var _errors = require('./errors');
-
-var _errors2 = _interopRequireDefault(_errors);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -59,12 +55,13 @@ var Command = (function () {
     this.state = {
       command: command,
       description: undefined,
+      docs: undefined,
+      example: undefined,
 
       syntax: new _syntax2.default(this),
       help: new _help2.default(this),
       parameters: new _parameters2.default(this),
       arguments: new _arguments2.default(this),
-      errors: new _errors2.default(),
 
       // Store the order of actions.
       actions: new _queue2.default(),
@@ -115,11 +112,11 @@ var Command = (function () {
   }, {
     key: 'parse',
     value: function parse(args) {
-      this.state.arguments.generate();
+      this.state.arguments.generate(args);
       this.state.syntax.generate();
       this.state.help.generate();
 
-      return this.state.arguments;
+      return this;
     }
 
     /*
@@ -133,6 +130,24 @@ var Command = (function () {
         return this;
       }
       this.state.description = _description;
+      return this;
+    }
+  }, {
+    key: 'docs',
+    value: function docs(_docs) {
+      if (!(0, _typeof2.default)(_docs, 'string')) {
+        return this;
+      }
+      this.state.docs = _docs;
+      return this;
+    }
+  }, {
+    key: 'example',
+    value: function example(_example) {
+      if (!(0, _typeof2.default)(_example, 'string')) {
+        return this;
+      }
+      this.state.example = _example;
       return this;
     }
 

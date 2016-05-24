@@ -63,16 +63,16 @@ var Queue = (function () {
       }
 
       var length = args.length;
-      var cb = args[length - 1];
-      if (!_util2.default.isFunction(cb)) {
-        cb = undefined;
-      }
+      // let cb = args[length - 1]
+      // if (!Util.isFunction(cb)) {
+      //   cb = undefined
+      // }
 
       if (this.isActive) {
         // Add to the beginning of the queue.
         return this.queue.unshift({ action: action, args: args });
       }
-      return this.queue.push({ action: action, args: args, cb: cb });
+      return this.queue.push({ action: action, args: args });
     }
   }]);
 

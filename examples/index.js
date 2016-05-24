@@ -38,65 +38,17 @@ var c = pyramid
     }
   })
 
-process.argv.splice(0, 2)
-c
-  .parse(process.argv)
+  .log('Hello there!')
+  // .wait(1)
 
-  // console.log(c)
+pyramid
+  .command('rain')
 
-  // console.log(pyramid.State)
-  //   .delimiter('[Pyramid]')
-  //   .color('white')
-  //   .interactive()
-  //   // .debug()
-  //   .autocomplete(true)
+pyramid
+  .command('ruine')
 
-  // pyramid.log('hello')
+pyramid
+  .command('rest')
 
-  // var c = pyramid
-  //   .command('run')
-
-  //   .required('instance', 'description 1')
-
-  //   .required('instance', {
-  //     description: 'description 2',
-  //     validate: false
-  //   })
-
-  //   .optional({
-  //     instance: {
-  //       description: 'test'
-  //     },
-  //     os: {
-  //       description: 'desc'
-  //     }
-  //   })
-
-  //   .option('-n --N -new', 'description')
-
-  //   .option('-n --N -new', {
-  //     value: true,
-  //     validate() {
-  //       return true
-  //     }
-  //   })
-
-  //   .option({
-  //     '-n --N -new': {
-  //       description: 'test'
-  //     }
-  //   })
-
-  //   .log('Runninnnnnnng')
-
-  // pyramid
-  //   .command('rain')
-
-  // pyramid
-  //   .command('ruine')
-
-  // pyramid
-  //   .command('rest')
-
-  // pyramid
-  //   .parse()
+pyramid
+  .parse()

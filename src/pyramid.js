@@ -3,6 +3,7 @@ import State from './state'
 import Util from 'util'
 import TypeOf from './util/typeof'
 import Command from './command'
+import Actions from './actions'
 
 let Pyramid = {
   Action, State,
@@ -48,8 +49,35 @@ let Pyramid = {
   command(command) {
     if (!TypeOf(command, 'string')) { return }
     return State.commands[command] = new Command(command)
+  },
+
+  parse(args = process.argv) {
+    if (!TypeOf(args, 'array')) {
+      // TODO: show error!
+      return
+    }
+
+    if (args === process.argv) {
+      args = args.slice(2, args.length)
+    }
+
+    // Find a matching command
+    if (args.length === 0) {
+      State.actions.add(Actions.actions.log, 'Please enter a command!')
+    }else if (args.length > 40) {
+      State.actions.add(Actions.actions.log, 'you command contain out of to many space seperated characters/words')
+    }
+    // State.actions.add(Actions.actions.log, 'Please enter a command!')
+    // State.actions.add(Actions.actions.log, 'Please enter a command!')
+
+    State.actions.add(Actions.actions.wait, 1)
+    State.actions.add(Actions.actions.log, 'Bye!')
+
+    Actions.execute()
   }
 
 }
+
+Actions.merge(Pyramid, State.actions)
 
 export default Pyramid

@@ -28,16 +28,16 @@ class Queue {
   // Add to the end of the queue.
   add (action, ...args) {
     let length = args.length
-    let cb = args[length - 1]
-    if (!Util.isFunction(cb)) {
-      cb = undefined
-    }
+    // let cb = args[length - 1]
+    // if (!Util.isFunction(cb)) {
+    //   cb = undefined
+    // }
 
     if (this.isActive) {
       // Add to the beginning of the queue.
       return this.queue.unshift({action, args})
     }
-    return this.queue.push({action, args, cb})
+    return this.queue.push({action, args})
   }
 
 }

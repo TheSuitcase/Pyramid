@@ -1,6 +1,7 @@
 import Util from 'util'
 import EventEmitter from 'events'
 
+import Actions from '../actions'
 import TypeOf from '../util/typeof'
 import Queue from '../util/queue'
 import State from '../util/state'
@@ -14,7 +15,7 @@ class Command {
   constructor (command) {
     this.name = command
 
-    this.state = {
+    this.state = new State({
       command: command,
       description: undefined,
       docs: undefined,
@@ -33,10 +34,9 @@ class Command {
         action: undefined,
         done: undefined,
       },
-    }
+    })
 
-    // Actions.merge(this, this.state.actions)
-    // Executer.bindActions(this, this.state.queue)
+    Actions.merge(this, this.state.actions)
 
     return this
   }
@@ -67,19 +67,19 @@ class Command {
    */
   description (description) {
     if (!TypeOf(description, 'string', 'undefined')) { return this; }
-    this.state.description = description
+    this.state.set({description})
     return this
   }
 
   docs (docs) {
     if (!TypeOf(docs, 'string')) { return this; }
-    this.state.docs = docs
+    this.state.set({docs})
     return this
   }
 
   example (example) {
     if (!TypeOf(example, 'string')) { return this; }
-    this.state.example = example
+    this.state.set({example})
     return this
   }
 
@@ -87,17 +87,29 @@ class Command {
    * Callbacks
    */
   validate (cb) {
-    this.state.callback.validate = cb
+    this.state.set({
+      callback: {
+        validate: cb
+      }
+    })
     return this
   }
 
   action (cb) {
-    this.state.callback.action = cb
+    this.state.set({
+      callback: {
+        action: cb
+      }
+    })
     return this
   }
 
   done (cb) {
-    this.state.callback.done = cb
+    this.state.set({
+      callback: {
+        done: cb
+      }
+    })
     return this
   }
 }

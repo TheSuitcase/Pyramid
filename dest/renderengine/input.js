@@ -6,34 +6,58 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _renderengine = require('../renderengine');
+var _keyboard = require('./keyboard');
 
-var _renderengine2 = _interopRequireDefault(_renderengine);
+var _keyboard2 = _interopRequireDefault(_keyboard);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Action = (function () {
-  function Action() {
-    _classCallCheck(this, Action);
+var Input = (function () {
+  function Input() {
+    _classCallCheck(this, Input);
 
-    this.state = {};
-
-    if (this.initialState) {
-      this.state = this.initialState();
-    }
+    this._data = [];
+    this._paused = false;
   }
 
-  _createClass(Action, [{
-    key: 'setState',
-    value: function setState(data) {
-      Object.assign(this.state, data);
-      _renderengine2.default.render(this);
+  _createClass(Input, [{
+    key: 'clear',
+    value: function clear() {
+      this._data = [];
+      return this;
+    }
+  }, {
+    key: 'pause',
+    value: function pause() {
+      this._paused = true;
+      return this;
+    }
+  }, {
+    key: 'resume',
+    value: function resume() {
+      this._paused = false;
+      return this;
+    }
+  }, {
+    key: 'pop',
+    value: function pop() {
+      return this._data.pop();
+    }
+  }, {
+    key: 'string',
+    get: function get() {
+      return this._data.join('');
+    }
+  }, {
+    key: 'array',
+    get: function get() {
+      return this._data;
     }
   }]);
 
-  return Action;
+  return Input;
 })();
 
-exports.default = Action;
+exports.default = Input;

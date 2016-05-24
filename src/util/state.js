@@ -1,4 +1,5 @@
 import Util from 'util'
+import Typeof from './typeof'
 
 class State {
   constructor (state) {
@@ -26,6 +27,14 @@ class State {
       item = data[keys[i]]
 
       if (Util.isObject(item)) {
+        // Filter out classes.
+        if ([
+            'Object', 'Boolean', 'String', 'Array'
+          ].indexOf(item.constructor) === -1) {
+          this[keys[i]] = item
+          continue
+        }
+
         if (!this[keys[i]]) {
           this[keys[i]] = {}
         }

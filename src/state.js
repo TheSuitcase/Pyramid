@@ -1,9 +1,10 @@
 import Colors from './colors'
 import Util from 'util'
 import State from './util/state'
+import Queue from './util/queue'
 
 export default new State({
-  actions: [],
+  actions: new Queue(),
   errors: [],
 
   command: undefined,

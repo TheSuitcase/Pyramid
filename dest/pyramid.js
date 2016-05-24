@@ -24,6 +24,10 @@ var _command2 = require('./command');
 
 var _command3 = _interopRequireDefault(_command2);
 
+var _actions = require('./actions');
+
+var _actions2 = _interopRequireDefault(_actions);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Pyramid = {
@@ -89,7 +93,35 @@ var Pyramid = {
       return;
     }
     return _state2.default.commands[_command] = new _command3.default(_command);
+  },
+  parse: function parse() {
+    var args = arguments.length <= 0 || arguments[0] === undefined ? process.argv : arguments[0];
+
+    if (!(0, _typeof2.default)(args, 'array')) {
+      // TODO: show error!
+      return;
+    }
+
+    if (args === process.argv) {
+      args = args.slice(2, args.length);
+    }
+
+    // Find a matching command
+    if (args.length === 0) {
+      _state2.default.actions.add(_actions2.default.actions.log, 'Please enter a command!');
+    } else if (args.length > 40) {
+      _state2.default.actions.add(_actions2.default.actions.log, 'you command contain out of to many space seperated characters/words');
+    }
+    // State.actions.add(Actions.actions.log, 'Please enter a command!')
+    // State.actions.add(Actions.actions.log, 'Please enter a command!')
+
+    _state2.default.actions.add(_actions2.default.actions.wait, 1);
+    _state2.default.actions.add(_actions2.default.actions.log, 'Bye!');
+
+    _actions2.default.execute();
   }
 };
+
+_actions2.default.merge(Pyramid, _state2.default.actions);
 
 exports.default = Pyramid;

@@ -14,6 +14,10 @@ var _events = require('events');
 
 var _events2 = _interopRequireDefault(_events);
 
+var _actions = require('../actions');
+
+var _actions2 = _interopRequireDefault(_actions);
+
 var _typeof = require('../util/typeof');
 
 var _typeof2 = _interopRequireDefault(_typeof);
@@ -52,7 +56,7 @@ var Command = (function () {
 
     this.name = command;
 
-    this.state = {
+    this.state = new _state2.default({
       command: command,
       description: undefined,
       docs: undefined,
@@ -71,10 +75,9 @@ var Command = (function () {
         action: undefined,
         done: undefined
       }
-    };
+    });
 
-    // Actions.merge(this, this.state.actions)
-    // Executer.bindActions(this, this.state.queue)
+    _actions2.default.merge(this, this.state.actions);
 
     return this;
   }
@@ -129,7 +132,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(_description, 'string', 'undefined')) {
         return this;
       }
-      this.state.description = _description;
+      this.state.set({ description: _description });
       return this;
     }
   }, {
@@ -138,7 +141,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(_docs, 'string')) {
         return this;
       }
-      this.state.docs = _docs;
+      this.state.set({ docs: _docs });
       return this;
     }
   }, {
@@ -147,7 +150,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(_example, 'string')) {
         return this;
       }
-      this.state.example = _example;
+      this.state.set({ example: _example });
       return this;
     }
 
@@ -158,19 +161,31 @@ var Command = (function () {
   }, {
     key: 'validate',
     value: function validate(cb) {
-      this.state.callback.validate = cb;
+      this.state.set({
+        callback: {
+          validate: cb
+        }
+      });
       return this;
     }
   }, {
     key: 'action',
     value: function action(cb) {
-      this.state.callback.action = cb;
+      this.state.set({
+        callback: {
+          action: cb
+        }
+      });
       return this;
     }
   }, {
     key: 'done',
     value: function done(cb) {
-      this.state.callback.done = cb;
+      this.state.set({
+        callback: {
+          done: cb
+        }
+      });
       return this;
     }
   }]);

@@ -16,10 +16,14 @@ var _state = require('./util/state');
 
 var _state2 = _interopRequireDefault(_state);
 
+var _queue = require('./util/queue');
+
+var _queue2 = _interopRequireDefault(_queue);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = new _state2.default({
-  actions: [],
+  actions: new _queue2.default(),
   errors: [],
 
   command: undefined,

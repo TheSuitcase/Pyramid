@@ -10,6 +10,10 @@ var _util = require('util');
 
 var _util2 = _interopRequireDefault(_util);
 
+var _typeof = require('./typeof');
+
+var _typeof2 = _interopRequireDefault(_typeof);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -45,6 +49,12 @@ var State = (function () {
         item = data[keys[i]];
 
         if (_util2.default.isObject(item)) {
+          // Filter out classes.
+          if (['Object', 'Boolean', 'String', 'Array'].indexOf(item.constructor) === -1) {
+            this[keys[i]] = item;
+            continue;
+          }
+
           if (!this[keys[i]]) {
             this[keys[i]] = {};
           }

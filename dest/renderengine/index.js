@@ -40,6 +40,10 @@ var _readline = require('./readline');
 
 var _readline2 = _interopRequireDefault(_readline);
 
+var _colors = require('../colors');
+
+var _colors2 = _interopRequireDefault(_colors);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var RenderEngine = {
@@ -50,6 +54,7 @@ var RenderEngine = {
   listeners: {},
   exitOnFirstRender: undefined,
   previousActionDidExitOnFirstRender: undefined,
+  lastRenderWasWithScreenManager: false,
 
   /*
     Setups
@@ -69,7 +74,7 @@ var RenderEngine = {
     this.render();
   },
   finished: function finished() {
-    _screen2.default.exit(this.rl);
+    _screen2.default.exit(RenderEngine.exitOnFirstRender ? false : true);
   },
   setAction: function setAction() {
     if (!_state2.default.actions.queue[0]) {
@@ -81,7 +86,9 @@ var RenderEngine = {
     RE.action = new item.action();
     RE.action.props = item.args || [];
     RE.action.input = new _input2.default();
-    RE.action.componentDidMount();
+    if (RE.action.componentDidMount) {
+      RE.action.componentDidMount();
+    }
   },
   listen: function listen() {
     _keyboard2.default.on('char', this.listeners.keyboardDidFireChar);
@@ -101,14 +108,19 @@ var RenderEngine = {
     if (!RenderEngine.action) {
       return;
     }
+    if (!char) {
+      char = -1;
+    } // -1 means backspace!
+
     if (RenderEngine.action && RenderEngine.action.userInputDidUpdate) {
-      if (!char) {
-        char = -1;
-      } // -1 means backspace!
-      // console.log('userInputDidUpdate', Keyboard._events)
       RenderEngine.action.userInputDidUpdate(char);
     }
-    RenderEngine.action.input._data.push(char);
+
+    if (char === -1) {
+      RenderEngine.action.input.pop();
+    } else {
+      RenderEngine.action.input._data.push(char);
+    }
     RenderEngine.render(RenderEngine.action);
   },
   removeAction: function removeAction() {
@@ -166,10 +178,23 @@ var RenderEngine = {
       if (this.previousActionDidExitOnFirstRender === false) {
         process.stdout.write('\n');
       }
-      console.log(output.join('\n'));
-    } else {
+      process.stdout.write(_colors2.default.blur(output.join('\n')) + '\n');
+      RE.lastRenderWasWithScreenManager = false;
+    } else if (exit) {
       RE.screenManager.render(output.join('\n'));
-    }
+      // console.log(output.length)
+      if (!RE.lastRenderWasWithScreenManager) {
+        console.log(' ');
+      }
+      RE.lastRenderWasWithScreenManager = false;
+      // Readline.output.write('\n\n')
+      // Readline.output.write('OUTPUT')
+      // Readline.output.write(output.join('\n'))
+      // process.stdout.write(output.join('\n'))
+    } else {
+        RE.screenManager.render(output.join('\n'));
+        RE.lastRenderWasWithScreenManager = true;
+      }
 
     if (exit) {
       RE.removeAction();

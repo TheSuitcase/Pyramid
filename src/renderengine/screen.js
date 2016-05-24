@@ -8,6 +8,7 @@
  */
 import AnsiEscapes from 'ansi-escapes'
 import Readline from './readline'
+import RenderEngine from './index'
 
 let Screen = {
   /**
@@ -62,10 +63,13 @@ let Screen = {
     Readline.input.resume()
   },
 
-  exit() {
+  exit(extraline = false) {
     // Note: Readline.output does not work
     // therefore we use process.stdout
-    process.stdout.write('\n')
+    if (RenderEngine.lastRenderWasWithScreenManager) {
+      process.stdout.write('\n')
+    }
+    // console.log(Readline.line.split('').length)
     process.exit()
   }
 }

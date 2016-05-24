@@ -25,6 +25,4 @@ let rl = Readline.createInterface({
   output: streams.output
 })
 
-console.log('[Readline] Setup')
-
 export default rl

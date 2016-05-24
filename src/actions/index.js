@@ -3,11 +3,15 @@ import RenderEngine from '../renderengine'
 
 import Log from './defaults/log'
 import Wait from './defaults/wait'
+import Confirm from './defaults/confirm'
+import Checkbox from './defaults/checkbox'
 
 let Actions = {
   actions: {
     log: Log,
-    wait: Wait
+    wait: Wait,
+    confirm: Confirm,
+    checkbox: Checkbox
   },
   add(name, action) {
     this.actions[name] = action

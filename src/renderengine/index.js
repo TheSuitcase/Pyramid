@@ -7,6 +7,7 @@ import CliWidth from 'cli-width'
 import StringWidth from 'string-width'
 import ScreenManager from './screenmanager'
 import Readline from './readline'
+import Colors from '../colors'
 
 let RenderEngine = {
   rl: Readline,
@@ -16,6 +17,7 @@ let RenderEngine = {
   listeners: {},
   exitOnFirstRender: undefined,
   previousActionDidExitOnFirstRender: undefined,
+  lastRenderWasWithScreenManager: false,
 
   /*
     Setups
@@ -38,7 +40,7 @@ let RenderEngine = {
   },
 
   finished() {
-    Screen.exit(this.rl)
+    Screen.exit(RenderEngine.exitOnFirstRender ? false : true)
   },
 
   setAction() {
@@ -51,7 +53,9 @@ let RenderEngine = {
     RE.action = new item.action()
     RE.action.props = item.args || []
     RE.action.input = new Input()
-    RE.action.componentDidMount()
+    if (RE.action.componentDidMount) {
+      RE.action.componentDidMount()
+    }
   },
 
   listen() {
@@ -69,15 +73,19 @@ let RenderEngine = {
   },
   keyboardDidFireChar(char) {
     if (!RenderEngine.action) { return; }
+    if (!char) { char = -1; } // -1 means backspace!
+
     if (RenderEngine.action && RenderEngine.action.userInputDidUpdate) {
-      if (!char) { char = -1; } // -1 means backspace!
-      // console.log('userInputDidUpdate', Keyboard._events)
       RenderEngine.action.userInputDidUpdate(char)
     }
-    RenderEngine.action.input._data.push(char)
+
+    if (char === -1) {
+      RenderEngine.action.input.pop()
+    } else {
+      RenderEngine.action.input._data.push(char)
+    }
     RenderEngine.render(RenderEngine.action)
   },
-
   removeAction() {
     if (!this.action) { return; }
     if (this.action.componentDidUnmount) {
@@ -132,9 +140,22 @@ let RenderEngine = {
       if (this.previousActionDidExitOnFirstRender === false) {
         process.stdout.write('\n')
       }
-      console.log(output.join('\n'))
+      process.stdout.write(Colors.blur(output.join('\n')) + '\n')
+      RE.lastRenderWasWithScreenManager = false
+    } else if (exit) {
+      RE.screenManager.render(output.join('\n'))
+      // console.log(output.length)
+      if (!RE.lastRenderWasWithScreenManager) {
+        console.log(' ')
+      }
+      RE.lastRenderWasWithScreenManager = false
+    // Readline.output.write('\n\n')
+    // Readline.output.write('OUTPUT')
+    // Readline.output.write(output.join('\n'))
+    // process.stdout.write(output.join('\n'))
     } else {
       RE.screenManager.render(output.join('\n'))
+      RE.lastRenderWasWithScreenManager = true
     }
 
     if (exit) {

@@ -112,10 +112,11 @@ var Pyramid = {
     } else if (args.length > 40) {
       _state2.default.actions.add(_actions2.default.actions.log, 'you command contain out of to many space seperated characters/words');
     }
-    // State.actions.add(Actions.actions.log, 'Please enter a command!')
-    // State.actions.add(Actions.actions.log, 'Please enter a command!')
 
-    _state2.default.actions.add(_actions2.default.actions.wait, 1);
+    _state2.default.actions.add(_actions2.default.actions.checkbox, 'item 1', 'item 2', 'item 3');
+    _state2.default.actions.add(_actions2.default.actions.log, 'Next!');
+
+    _state2.default.actions.add(_actions2.default.actions.confirm);
     _state2.default.actions.add(_actions2.default.actions.log, 'Bye!');
 
     _actions2.default.execute();

@@ -20,12 +20,22 @@ var _wait = require('./defaults/wait');
 
 var _wait2 = _interopRequireDefault(_wait);
 
+var _confirm = require('./defaults/confirm');
+
+var _confirm2 = _interopRequireDefault(_confirm);
+
+var _checkbox = require('./defaults/checkbox');
+
+var _checkbox2 = _interopRequireDefault(_checkbox);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Actions = {
   actions: {
     log: _log2.default,
-    wait: _wait2.default
+    wait: _wait2.default,
+    confirm: _confirm2.default,
+    checkbox: _checkbox2.default
   },
   add: function add(name, action) {
     this.actions[name] = action;

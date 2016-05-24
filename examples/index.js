@@ -39,6 +39,7 @@ var c = pyramid
   })
 
   .log('Hello there!')
+  .confirm()
   // .wait(1)
 
 pyramid

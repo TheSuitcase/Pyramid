@@ -38,6 +38,4 @@ var rl = _readline2.default.createInterface({
   output: streams.output
 });
 
-console.log('[Readline] Setup');
-
 exports.default = rl;

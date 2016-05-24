@@ -67,10 +67,11 @@ let Pyramid = {
     }else if (args.length > 40) {
       State.actions.add(Actions.actions.log, 'you command contain out of to many space seperated characters/words')
     }
-    // State.actions.add(Actions.actions.log, 'Please enter a command!')
-    // State.actions.add(Actions.actions.log, 'Please enter a command!')
 
-    State.actions.add(Actions.actions.wait, 1)
+    State.actions.add(Actions.actions.checkbox, 'item 1', 'item 2', 'item 3')
+    State.actions.add(Actions.actions.log, 'Next!')
+
+    State.actions.add(Actions.actions.confirm)
     State.actions.add(Actions.actions.log, 'Bye!')
 
     Actions.execute()

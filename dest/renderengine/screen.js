@@ -12,16 +12,11 @@ var _readline = require('./readline');
 
 var _readline2 = _interopRequireDefault(_readline);
 
+var _index = require('./index');
+
+var _index2 = _interopRequireDefault(_index);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/*
-  Disclaimer
-  This file is heavily inspired by Inquirer.js
-
-  Source: Inquirer.js
-  File: readline.js
-  Url: https://github.com/SBoudrias/Inquirer.js/blob/66471210718ce92928ab5a6cc9a58fb70fc5d9d9/lib/utils/readline.js
- */
 
 var Screen = {
   /**
@@ -76,12 +71,24 @@ var Screen = {
     _readline2.default.input.resume();
   },
   exit: function exit() {
+    var extraline = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
     // Note: Readline.output does not work
     // therefore we use process.stdout
-    process.stdout.write('\n');
+    if (_index2.default.lastRenderWasWithScreenManager) {
+      process.stdout.write('\n');
+    }
+    // console.log(Readline.line.split('').length)
     process.exit();
   }
-};
+}; /*
+     Disclaimer
+     This file is heavily inspired by Inquirer.js
+   
+     Source: Inquirer.js
+     File: readline.js
+     Url: https://github.com/SBoudrias/Inquirer.js/blob/66471210718ce92928ab5a6cc9a58fb70fc5d9d9/lib/utils/readline.js
+    */
 
 Screen.start();
 

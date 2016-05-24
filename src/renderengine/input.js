@@ -1,4 +1,5 @@
 import Keyboard from './keyboard'
+import Readline from './readline'
 
 class Input {
   constructor () {
@@ -13,6 +14,7 @@ class Input {
   }
   clear () {
     this._data = []
+    Readline.line = ''
     return this
   }
   pause () {

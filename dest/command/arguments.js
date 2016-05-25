@@ -29,7 +29,6 @@ var Arguments = (function () {
       this.collectRequiredArguments(args);
       this.collectOptionalArguments(args);
       this.collectionOptions(args);
-      console.log(this);
       return this;
     }
   }, {

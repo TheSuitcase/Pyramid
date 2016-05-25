@@ -43,7 +43,8 @@ var Confirm = (function (_Action) {
     key: 'initialState',
     value: function initialState() {
       return {
-        position: 0
+        position: 0,
+        checked: -1
       };
     }
   }, {
@@ -68,7 +69,7 @@ var Confirm = (function (_Action) {
       var position = this.state.position;
 
       if (event === 'return') {
-        this.setState({ exit: true });
+        this.setState({ exit: true, checked: position });
       } else if (event === 'up') {
         position--;
       } else if (event === 'down') {
@@ -111,7 +112,7 @@ var Confirm = (function (_Action) {
 
       output = output.concat(this.renderItems());
 
-      return this.state.exit ? 'Checkboxes: Exit' : output;
+      return this.state.exit ? 'Checkboxes: ' + _chalk2.default.cyan(this.props[this.state.position]) : output;
     }
   }]);
 

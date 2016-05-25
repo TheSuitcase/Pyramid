@@ -68,13 +68,27 @@ let Pyramid = {
       State.actions.add(Actions.actions.log, 'you command contain out of to many space seperated characters/words')
     }
 
-    State.actions.add(Actions.actions.checkbox, 'item 1', 'item 2', 'item 3')
-    State.actions.add(Actions.actions.log, 'Next!')
+    let command = State.commands[args[0]]
 
-    State.actions.add(Actions.actions.confirm)
-    State.actions.add(Actions.actions.log, 'Bye!')
+    if (!command) {
+      State.actions.add(Actions.actions.log, `Your command ${args[0]} does not exist!`)
+    } else {
+      // Parse the command and combine the action queues
+      args.splice(0, 1)
+      command.parse(args)
 
-    Actions.execute()
+      if (command.state.arguments.errors && command.state.arguments.errors.length > 0) {
+        command.state.arguments.errors.forEach((error) => {
+          State.actions.add(Actions.actions.log, error)
+        })
+        command = undefined
+      } else {
+        State.set({command})
+      }
+    }
+
+
+    Actions.execute(command)
   }
 
 }

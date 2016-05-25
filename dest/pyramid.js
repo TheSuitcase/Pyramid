@@ -113,13 +113,26 @@ var Pyramid = {
       _state2.default.actions.add(_actions2.default.actions.log, 'you command contain out of to many space seperated characters/words');
     }
 
-    _state2.default.actions.add(_actions2.default.actions.checkbox, 'item 1', 'item 2', 'item 3');
-    _state2.default.actions.add(_actions2.default.actions.log, 'Next!');
+    var command = _state2.default.commands[args[0]];
 
-    _state2.default.actions.add(_actions2.default.actions.confirm);
-    _state2.default.actions.add(_actions2.default.actions.log, 'Bye!');
+    if (!command) {
+      _state2.default.actions.add(_actions2.default.actions.log, 'Your command ' + args[0] + ' does not exist!');
+    } else {
+      // Parse the command and combine the action queues
+      args.splice(0, 1);
+      command.parse(args);
 
-    _actions2.default.execute();
+      if (command.state.arguments.errors && command.state.arguments.errors.length > 0) {
+        command.state.arguments.errors.forEach(function (error) {
+          _state2.default.actions.add(_actions2.default.actions.log, error);
+        });
+        command = undefined;
+      } else {
+        _state2.default.set({ command: command });
+      }
+    }
+
+    _actions2.default.execute(command);
   }
 };
 

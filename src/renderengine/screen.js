@@ -69,7 +69,6 @@ let Screen = {
     if (RenderEngine.lastRenderWasWithScreenManager) {
       process.stdout.write('\n')
     }
-    // console.log(Readline.line.split('').length)
     process.exit()
   }
 }

@@ -78,7 +78,6 @@ var Screen = {
     if (_index2.default.lastRenderWasWithScreenManager) {
       process.stdout.write('\n');
     }
-    // console.log(Readline.line.split('').length)
     process.exit();
   }
 }; /*

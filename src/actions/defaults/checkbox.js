@@ -6,7 +6,8 @@ import clc from 'cli-color'
 class Confirm extends Action {
   initialState () {
     return {
-      position: 0
+      position: 0,
+      checked: -1,
     }
   }
   userInputDidUpdate (char) {
@@ -25,7 +26,7 @@ class Confirm extends Action {
     let position = this.state.position
 
     if (event === 'return') {
-      this.setState({exit: true})
+      this.setState({exit: true, checked: position})
     }else if (event === 'up') {
       position--
     }else if (event === 'down') {
@@ -65,7 +66,7 @@ class Confirm extends Action {
 
     output = output.concat(this.renderItems())
 
-    return this.state.exit ? 'Checkboxes: Exit' : output
+    return this.state.exit ? 'Checkboxes: ' + Chalk.cyan(this.props[this.state.position]) : output
   }
 }
 

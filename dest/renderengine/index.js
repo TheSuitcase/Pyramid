@@ -175,26 +175,18 @@ var RenderEngine = {
     }
 
     if (this.exitOnFirstRender === true) {
-      if (this.previousActionDidExitOnFirstRender === false) {
-        process.stdout.write('\n');
-      }
       process.stdout.write(_colors2.default.blur(output.join('\n')) + '\n');
       RE.lastRenderWasWithScreenManager = false;
     } else if (exit) {
       RE.screenManager.render(output.join('\n'));
-      // console.log(output.length)
-      if (!RE.lastRenderWasWithScreenManager) {
+      if (RE.lastRenderWasWithScreenManager) {
         console.log(' ');
       }
       RE.lastRenderWasWithScreenManager = false;
-      // Readline.output.write('\n\n')
-      // Readline.output.write('OUTPUT')
-      // Readline.output.write(output.join('\n'))
-      // process.stdout.write(output.join('\n'))
     } else {
-        RE.screenManager.render(output.join('\n'));
-        RE.lastRenderWasWithScreenManager = true;
-      }
+      RE.screenManager.render(output.join('\n'));
+      RE.lastRenderWasWithScreenManager = true;
+    }
 
     if (exit) {
       RE.removeAction();

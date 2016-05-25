@@ -12,7 +12,6 @@ class Arguments {
     this.collectRequiredArguments(args)
     this.collectOptionalArguments(args)
     this.collectionOptions(args)
-    console.log(this)
     return this
   }
   collectRequiredArguments (args) {

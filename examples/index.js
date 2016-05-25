@@ -40,7 +40,7 @@ var c = pyramid
 
   .log('Hello there!')
   .confirm()
-  // .wait(1)
+  .wait(1)
 
 pyramid
   .command('rain')

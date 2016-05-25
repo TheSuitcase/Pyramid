@@ -9,9 +9,25 @@ class Arguments {
     this.errors = []
   }
   generate (args = []) {
-    this.collectRequiredArguments(args)
-    this.collectOptionalArguments(args)
-    this.collectionOptions(args)
+    let clonedArgs = args.map((arg) => {
+      return arg
+    })
+
+    this.collectRequiredArguments(clonedArgs)
+
+    // Checkpoint!
+    if (this.errors.length > 0) {
+      return this
+    }
+
+    this.collectOptionalArguments(clonedArgs)
+
+    // Checkpoint!
+    if (this.errors.length > 0) {
+      return this
+    }
+
+    this.collectionOptions(clonedArgs)
     return this
   }
   collectRequiredArguments (args) {
@@ -31,10 +47,26 @@ class Arguments {
       return
     }
 
-    let arg
+    let arg, input
     for (let i = 0; i < len; i++) {
       arg = params[keys[i]]
-      this.required[arg.name] = args.splice(0, 1)[0]
+      input = args.splice(0, 1)[0]
+
+      // Validate the input when the developer has given us
+      // an validate callback
+      if (arg.validate) {
+        let valid = arg.validate(input)
+
+        if (!valid) {
+          this.errors.push(`The argument ${input} is invalid!`)
+          return
+        }else if (valid !== true) {
+          this.errors.push(valid)
+          return
+        }
+      }
+
+      this.required[arg.name] = input
     }
   }
 
@@ -49,7 +81,7 @@ class Arguments {
       return
     }
 
-    let arg
+    let arg, input
     for (let i = 0; i < len; i++) {
       arg = params[keys[i]]
 
@@ -58,7 +90,23 @@ class Arguments {
         return
       }
 
-      this.optional[arg.name] = args.splice(0, 1)[0]
+      input = args.splice(0, 1)[0]
+
+      // Validate the input when the developer has given us
+      // an validate callback
+      if (arg.validate) {
+        let valid = arg.validate(input)
+
+        if (!valid) {
+          this.errors.push(`The argument ${input} is invalid!`)
+          return
+        }else if (valid !== true) {
+          this.errors.push(valid)
+          return
+        }
+      }
+
+      this.optional[arg.name] = input
     }
   }
   collectionOptions (args) {
@@ -72,24 +120,44 @@ class Arguments {
     }
 
     let option
-    let pos
+    let pos, input, validInput
 
     keys.forEach((key) => {
       option = params[key]
       pos = args.indexOf(option.name)
+      input = args[pos + 1]
+      validInput = undefined
 
       if (pos > -1) {
         if (!option.value) {
-          this.options[option.name] = true
+          validInput = true
+        }
+
+        if (input && input.indexOf('-') === -1) {
+          validInput = input
+        } else {
+          this.errors.push(`The option ${option.name} is missing a value!`)
           return
         }
 
-        if (args[pos + 1] && args[pos + 1].indexOf('-') === -1) {
-          this.options[option.name] = args[pos + 1]
-          return
+        // Validate the input when the developer has given us
+        // an validate callback
+        if (validInput !== false && option.validate) {
+          let valid = option.validate(input)
+
+          if (!valid) {
+            this.errors.push(`The argument ${input} is invalid!`)
+            return
+          }else if (valid !== true) {
+            this.errors.push(valid)
+            return
+          }
         }
 
-        this.errors.push(`The option ${option.name} is missing a value!`)
+        // Store the input
+        if (validInput) {
+          this.options[option.name] = validInput
+        }
       }
     })
   }

@@ -56,6 +56,9 @@ var RenderEngine = {
   previousActionDidExitOnFirstRender: undefined,
   lastRenderWasWithScreenManager: false,
 
+  response: undefined,
+  responses: [],
+
   /*
     Setups
    */
@@ -74,7 +77,13 @@ var RenderEngine = {
     this.render();
   },
   finished: function finished() {
+    console.log(this.responses);
     _screen2.default.exit(RenderEngine.exitOnFirstRender ? false : true);
+  },
+  setResponse: function setResponse() {
+    var response = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+
+    RE.response = response;
   },
   setAction: function setAction() {
     if (!_state2.default.actions.queue[0]) {
@@ -133,6 +142,12 @@ var RenderEngine = {
     this.previousActionDidExitOnFirstRender = this.exitOnFirstRender ? true : false;
     this.exitOnFirstRender = undefined;
     this.lastOutput = [];
+
+    if (this.response !== undefined) {
+      this.responses.push({ type: this.action.constructor.name.toLowerCase(), response: this.response });
+    }
+    this.response = undefined;
+
     this.action = undefined;
   },
   render: function render(action) {
@@ -175,7 +190,7 @@ var RenderEngine = {
     }
 
     if (this.exitOnFirstRender === true) {
-      process.stdout.write(_colors2.default.blur(output.join('\n')) + '\n');
+      process.stdout.write(output.join('\n') + '\n');
       RE.lastRenderWasWithScreenManager = false;
     } else if (exit) {
       RE.screenManager.render(output.join('\n'));

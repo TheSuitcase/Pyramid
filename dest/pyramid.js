@@ -28,6 +28,10 @@ var _actions = require('./actions');
 
 var _actions2 = _interopRequireDefault(_actions);
 
+var _executer = require('./executer');
+
+var _executer2 = _interopRequireDefault(_executer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Pyramid = {
@@ -94,45 +98,34 @@ var Pyramid = {
     }
     return _state2.default.commands[_command] = new _command3.default(_command);
   },
-  parse: function parse() {
-    var args = arguments.length <= 0 || arguments[0] === undefined ? process.argv : arguments[0];
 
-    if (!(0, _typeof2.default)(args, 'array')) {
-      // TODO: show error!
+  // Callbacks.
+  action: function action(cb) {
+    if (!(0, _typeof2.default)(cb, 'function')) {
       return;
     }
-
-    if (args === process.argv) {
-      args = args.slice(2, args.length);
+    _state2.default.set({ callbacks: {
+        action: cb
+      } });
+  },
+  validate: function validate(cb) {
+    if (!(0, _typeof2.default)(cb, 'function')) {
+      return;
     }
-
-    // Find a matching command
-    if (args.length === 0) {
-      _state2.default.actions.add(_actions2.default.actions.log, 'Please enter a command!');
-    } else if (args.length > 40) {
-      _state2.default.actions.add(_actions2.default.actions.log, 'you command contain out of to many space seperated characters/words');
+    _state2.default.set({ callbacks: {
+        validate: cb
+      } });
+  },
+  exit: function exit(cb) {
+    if (!(0, _typeof2.default)(cb, 'function')) {
+      return;
     }
-
-    var command = _state2.default.commands[args[0]];
-
-    if (!command) {
-      _state2.default.actions.add(_actions2.default.actions.log, 'Your command ' + args[0] + ' does not exist!');
-    } else {
-      // Parse the command and combine the action queues
-      args.splice(0, 1);
-      command.parse(args);
-
-      if (command.state.arguments.errors && command.state.arguments.errors.length > 0) {
-        command.state.arguments.errors.forEach(function (error) {
-          _state2.default.actions.add(_actions2.default.actions.log, error);
-        });
-        command = undefined;
-      } else {
-        _state2.default.set({ command: command });
-      }
-    }
-
-    _actions2.default.execute(command);
+    _state2.default.set({ callbacks: {
+        exit: cb
+      } });
+  },
+  parse: function parse() {
+    _executer2.default.parse.apply(_executer2.default, arguments);
   }
 };
 

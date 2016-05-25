@@ -4,6 +4,7 @@ import Util from 'util'
 import TypeOf from './util/typeof'
 import Command from './command'
 import Actions from './actions'
+import Executer from './executer'
 
 let Pyramid = {
   Action, State,
@@ -51,44 +52,30 @@ let Pyramid = {
     return State.commands[command] = new Command(command)
   },
 
-  parse(args = process.argv) {
-    if (!TypeOf(args, 'array')) {
-      // TODO: show error!
-      return
-    }
+  // Callbacks.
+  action(cb) {
+    if (!TypeOf(cb, 'function')) { return }
+    State.set({callbacks: {
+        action: cb
+    }})
+  },
 
-    if (args === process.argv) {
-      args = args.slice(2, args.length)
-    }
+  validate(cb) {
+    if (!TypeOf(cb, 'function')) { return }
+    State.set({callbacks: {
+        validate: cb
+    }})
+  },
 
-    // Find a matching command
-    if (args.length === 0) {
-      State.actions.add(Actions.actions.log, 'Please enter a command!')
-    }else if (args.length > 40) {
-      State.actions.add(Actions.actions.log, 'you command contain out of to many space seperated characters/words')
-    }
+  exit(cb) {
+    if (!TypeOf(cb, 'function')) { return }
+    State.set({callbacks: {
+        exit: cb
+    }})
+  },
 
-    let command = State.commands[args[0]]
-
-    if (!command) {
-      State.actions.add(Actions.actions.log, `Your command ${args[0]} does not exist!`)
-    } else {
-      // Parse the command and combine the action queues
-      args.splice(0, 1)
-      command.parse(args)
-
-      if (command.state.arguments.errors && command.state.arguments.errors.length > 0) {
-        command.state.arguments.errors.forEach((error) => {
-          State.actions.add(Actions.actions.log, error)
-        })
-        command = undefined
-      } else {
-        State.set({command})
-      }
-    }
-
-
-    Actions.execute(command)
+  parse() {
+    Executer.parse.apply(Executer, arguments)
   }
 
 }

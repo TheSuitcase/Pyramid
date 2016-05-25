@@ -5,10 +5,12 @@ import Log from './defaults/log'
 import Wait from './defaults/wait'
 import Confirm from './defaults/confirm'
 import Checkbox from './defaults/checkbox'
+import ErrorAction from './defaults/error'
 
 let Actions = {
   actions: {
     log: Log,
+    error: ErrorAction,
     wait: Wait,
     confirm: Confirm,
     checkbox: Checkbox
@@ -32,14 +34,6 @@ let Actions = {
 
       scope[key] = queue.addWithScope.bind(queue, scope, this.actions[key])
     })
-  },
-  execute(command) {
-    // Merge command an state queue.
-    if (command) {
-      State.actions.merge(command.state.actions)
-    }
-    // console.log(State.actions)
-    RenderEngine.start()
   }
 }
 

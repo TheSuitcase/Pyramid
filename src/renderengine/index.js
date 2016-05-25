@@ -19,6 +19,9 @@ let RenderEngine = {
   previousActionDidExitOnFirstRender: undefined,
   lastRenderWasWithScreenManager: false,
 
+  response: undefined,
+  responses: [],
+
   /*
     Setups
    */
@@ -40,7 +43,12 @@ let RenderEngine = {
   },
 
   finished() {
+    console.log(this.responses)
     Screen.exit(RenderEngine.exitOnFirstRender ? false : true)
+  },
+
+  setResponse(response = []) {
+    RE.response = response
   },
 
   setAction() {
@@ -94,6 +102,12 @@ let RenderEngine = {
     this.previousActionDidExitOnFirstRender = this.exitOnFirstRender ? true : false
     this.exitOnFirstRender = undefined
     this.lastOutput = []
+
+    if (this.response !== undefined) {
+      this.responses.push({type: this.action.constructor.name.toLowerCase(), response: this.response})
+    }
+    this.response = undefined
+
     this.action = undefined
   },
 
@@ -137,7 +151,7 @@ let RenderEngine = {
     }
 
     if (this.exitOnFirstRender === true) {
-      process.stdout.write(Colors.blur(output.join('\n')) + '\n')
+      process.stdout.write(output.join('\n') + '\n')
       RE.lastRenderWasWithScreenManager = false
     } else if (exit) {
       RE.screenManager.render(output.join('\n'))

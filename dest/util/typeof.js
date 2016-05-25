@@ -22,7 +22,8 @@ var index = {
   array: '[object Array]',
   object: '[object Object]',
   regexp: '[object RegExp]',
-  boolean: '[object Boolean]'
+  boolean: '[object Boolean]',
+  function: '[object Function]'
 };
 
 var typeIndex = {
@@ -30,7 +31,8 @@ var typeIndex = {
   '[object Array]': 'array',
   '[object Object]': 'object',
   '[object RegExp]': 'regexp',
-  '[object Boolean]': 'boolean'
+  '[object Boolean]': 'boolean',
+  '[object Function]': 'function'
 };
 
 var TypeOf = function TypeOf(value) {
@@ -56,6 +58,7 @@ var TypeOf = function TypeOf(value) {
       case 'string':
       case 'number':
       case 'boolean':
+      case 'function':
         if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === type) {
           matches++;
         }

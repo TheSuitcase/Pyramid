@@ -4,6 +4,10 @@ import Chalk from 'chalk'
 import clc from 'cli-color'
 
 class Confirm extends Action {
+  componentDidUnmount () {
+    this.setResponse(this.state.confirm)
+    clearInterval(this.interval)
+  }
   userInputDidUpdate (char) {
     if (char === -1) { return }
     char = char.toLowerCase()
@@ -20,9 +24,6 @@ class Confirm extends Action {
     if (event === 'return') {
       this.setState({exit: true})
     }
-  }
-  componentDidUnmount () {
-    clearInterval(this.interval)
   }
   componentShouldExit () {
     return this.state.exit || false

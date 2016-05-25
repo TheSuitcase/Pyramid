@@ -1,14 +1,8 @@
 import Action from '../action'
 
 class Log extends Action {
-  componentDidMount () {
-    // console.log('componentDidMount')
-  }
-  componentDidUnmount () {
-    // console.log('componentDidUnMount')
-  }
   componentShouldClose () {
-    return true // false
+    return true
   }
   render () {
     return this.props[0]

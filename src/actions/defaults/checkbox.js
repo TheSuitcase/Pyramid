@@ -3,7 +3,7 @@ import Colors from '../../colors'
 import Chalk from 'chalk'
 import clc from 'cli-color'
 
-class Confirm extends Action {
+class Checkbox extends Action {
   initialState () {
     return {
       position: 0,
@@ -43,6 +43,7 @@ class Confirm extends Action {
   }
   componentDidUnmount () {}
   componentShouldExit () {
+    this.setResponse(this.state.checked)
     return this.state.exit || false
   }
   renderItems () {
@@ -70,4 +71,4 @@ class Confirm extends Action {
   }
 }
 
-export default Confirm
+export default Checkbox

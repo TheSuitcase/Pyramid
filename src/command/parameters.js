@@ -1,5 +1,6 @@
 import Typeof from '../util/typeof'
 import Util from 'util'
+import RegexParameterFunction from '../util/regexParameter'
 
 class Parameters {
   constructor (command) {
@@ -83,7 +84,7 @@ class Parameters {
 
     // Description and validation can be faulty,
     // they will be removed from the result.
-    if (!Typeof(result.description, 'string')) {
+    if (result.description !== undefined && !Typeof(result.description, 'string')) {
       delete result.description
       errors.push({
         command: this.command,
@@ -92,13 +93,17 @@ class Parameters {
       })
     }
 
-    if (result.validate !== undefined && !Typeof(result.validate, 'string', 'regexp')) {
+    if (result.validate !== undefined && !Typeof(result.validate, 'function', 'regexp')) {
       delete result.validate
       errors.push({
         command: this.command,
         type: 'validate',
         message: 'The validate field must be a regex or a function!'
       })
+    } else {
+      if (Typeof(result.validate, 'regexp')) {
+        result.validate = RegexParameterFunction.bind(null, result.validate)
+      }
     }
 
     // Store the newly gained errors.

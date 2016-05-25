@@ -30,16 +30,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Confirm = (function (_Action) {
-  _inherits(Confirm, _Action);
+var Checkbox = (function (_Action) {
+  _inherits(Checkbox, _Action);
 
-  function Confirm() {
-    _classCallCheck(this, Confirm);
+  function Checkbox() {
+    _classCallCheck(this, Checkbox);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Confirm).apply(this, arguments));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Checkbox).apply(this, arguments));
   }
 
-  _createClass(Confirm, [{
+  _createClass(Checkbox, [{
     key: 'initialState',
     value: function initialState() {
       return {
@@ -90,6 +90,7 @@ var Confirm = (function (_Action) {
   }, {
     key: 'componentShouldExit',
     value: function componentShouldExit() {
+      this.setResponse(this.state.checked);
       return this.state.exit || false;
     }
   }, {
@@ -116,7 +117,7 @@ var Confirm = (function (_Action) {
     }
   }]);
 
-  return Confirm;
+  return Checkbox;
 })(_action2.default);
 
-exports.default = Confirm;
+exports.default = Checkbox;

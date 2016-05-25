@@ -26,9 +26,25 @@ var Arguments = (function () {
     value: function generate() {
       var args = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
 
-      this.collectRequiredArguments(args);
-      this.collectOptionalArguments(args);
-      this.collectionOptions(args);
+      var clonedArgs = args.map(function (arg) {
+        return arg;
+      });
+
+      this.collectRequiredArguments(clonedArgs);
+
+      // Checkpoint!
+      if (this.errors.length > 0) {
+        return this;
+      }
+
+      this.collectOptionalArguments(clonedArgs);
+
+      // Checkpoint!
+      if (this.errors.length > 0) {
+        return this;
+      }
+
+      this.collectionOptions(clonedArgs);
       return this;
     }
   }, {
@@ -50,10 +66,27 @@ var Arguments = (function () {
         return;
       }
 
-      var arg = undefined;
+      var arg = undefined,
+          input = undefined;
       for (var i = 0; i < len; i++) {
         arg = params[keys[i]];
-        this.required[arg.name] = args.splice(0, 1)[0];
+        input = args.splice(0, 1)[0];
+
+        // Validate the input when the developer has given us
+        // an validate callback
+        if (arg.validate) {
+          var valid = arg.validate(input);
+
+          if (!valid) {
+            this.errors.push('The argument ' + input + ' is invalid!');
+            return;
+          } else if (valid !== true) {
+            this.errors.push(valid);
+            return;
+          }
+        }
+
+        this.required[arg.name] = input;
       }
     }
   }, {
@@ -69,7 +102,8 @@ var Arguments = (function () {
         return;
       }
 
-      var arg = undefined;
+      var arg = undefined,
+          input = undefined;
       for (var i = 0; i < len; i++) {
         arg = params[keys[i]];
 
@@ -78,7 +112,23 @@ var Arguments = (function () {
           return;
         }
 
-        this.optional[arg.name] = args.splice(0, 1)[0];
+        input = args.splice(0, 1)[0];
+
+        // Validate the input when the developer has given us
+        // an validate callback
+        if (arg.validate) {
+          var valid = arg.validate(input);
+
+          if (!valid) {
+            this.errors.push('The argument ' + input + ' is invalid!');
+            return;
+          } else if (valid !== true) {
+            this.errors.push(valid);
+            return;
+          }
+        }
+
+        this.optional[arg.name] = input;
       }
     }
   }, {
@@ -96,24 +146,46 @@ var Arguments = (function () {
       }
 
       var option = undefined;
-      var pos = undefined;
+      var pos = undefined,
+          input = undefined,
+          validInput = undefined;
 
       keys.forEach(function (key) {
         option = params[key];
         pos = args.indexOf(option.name);
+        input = args[pos + 1];
+        validInput = undefined;
 
         if (pos > -1) {
           if (!option.value) {
-            _this.options[option.name] = true;
+            validInput = true;
+          }
+
+          if (input && input.indexOf('-') === -1) {
+            validInput = input;
+          } else {
+            _this.errors.push('The option ' + option.name + ' is missing a value!');
             return;
           }
 
-          if (args[pos + 1] && args[pos + 1].indexOf('-') === -1) {
-            _this.options[option.name] = args[pos + 1];
-            return;
+          // Validate the input when the developer has given us
+          // an validate callback
+          if (validInput !== false && option.validate) {
+            var valid = option.validate(input);
+
+            if (!valid) {
+              _this.errors.push('The argument ' + input + ' is invalid!');
+              return;
+            } else if (valid !== true) {
+              _this.errors.push(valid);
+              return;
+            }
           }
 
-          _this.errors.push('The option ' + option.name + ' is missing a value!');
+          // Store the input
+          if (validInput) {
+            _this.options[option.name] = validInput;
+          }
         }
       });
     }

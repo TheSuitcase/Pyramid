@@ -4,7 +4,7 @@ import clc from 'cli-color'
 // for more colors.
 
 let Colors = {
-  red: clc.xterm(202),
+  red: clc.xterm(9),
   yellow: clc.xterm(228),
   orange: clc.xterm(214),
   blue: clc.xterm(75),

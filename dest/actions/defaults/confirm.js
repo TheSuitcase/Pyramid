@@ -40,6 +40,12 @@ var Confirm = (function (_Action) {
   }
 
   _createClass(Confirm, [{
+    key: 'componentDidUnmount',
+    value: function componentDidUnmount() {
+      this.setResponse(this.state.confirm);
+      clearInterval(this.interval);
+    }
+  }, {
     key: 'userInputDidUpdate',
     value: function userInputDidUpdate(char) {
       if (char === -1) {
@@ -61,11 +67,6 @@ var Confirm = (function (_Action) {
       if (event === 'return') {
         this.setState({ exit: true });
       }
-    }
-  }, {
-    key: 'componentDidUnmount',
-    value: function componentDidUnmount() {
-      clearInterval(this.interval);
     }
   }, {
     key: 'componentShouldExit',

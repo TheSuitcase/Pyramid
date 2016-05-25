@@ -14,7 +14,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // for more colors.
 
 var Colors = {
-  red: _cliColor2.default.xterm(202),
+  red: _cliColor2.default.xterm(9),
   yellow: _cliColor2.default.xterm(228),
   orange: _cliColor2.default.xterm(214),
   blue: _cliColor2.default.xterm(75),

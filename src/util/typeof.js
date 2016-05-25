@@ -14,7 +14,8 @@ let index = {
   array: '[object Array]',
   object: '[object Object]',
   regexp: '[object RegExp]',
-  boolean: '[object Boolean]'
+  boolean: '[object Boolean]',
+  function: '[object Function]',
 }
 
 let typeIndex = {
@@ -22,7 +23,8 @@ let typeIndex = {
   '[object Array]': 'array',
   '[object Object]': 'object',
   '[object RegExp]': 'regexp',
-  '[object Boolean]': 'boolean'
+  '[object Boolean]': 'boolean',
+  '[object Function]': 'function',
 }
 
 let TypeOf = (value, ...args) => {
@@ -47,6 +49,7 @@ let TypeOf = (value, ...args) => {
       case 'string':
       case 'number':
       case 'boolean':
+      case 'function':
         if (typeof value === type) {
           matches++
         }

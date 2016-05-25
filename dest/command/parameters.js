@@ -14,6 +14,10 @@ var _util = require('util');
 
 var _util2 = _interopRequireDefault(_util);
 
+var _regexParameter = require('../util/regexParameter');
+
+var _regexParameter2 = _interopRequireDefault(_regexParameter);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -108,7 +112,7 @@ var Parameters = (function () {
 
       // Description and validation can be faulty,
       // they will be removed from the result.
-      if (!(0, _typeof2.default)(result.description, 'string')) {
+      if (result.description !== undefined && !(0, _typeof2.default)(result.description, 'string')) {
         delete result.description;
         errors.push({
           command: this.command,
@@ -117,13 +121,17 @@ var Parameters = (function () {
         });
       }
 
-      if (result.validate !== undefined && !(0, _typeof2.default)(result.validate, 'string', 'regexp')) {
+      if (result.validate !== undefined && !(0, _typeof2.default)(result.validate, 'function', 'regexp')) {
         delete result.validate;
         errors.push({
           command: this.command,
           type: 'validate',
           message: 'The validate field must be a regex or a function!'
         });
+      } else {
+        if ((0, _typeof2.default)(result.validate, 'regexp')) {
+          result.validate = _regexParameter2.default.bind(null, result.validate);
+        }
       }
 
       // Store the newly gained errors.

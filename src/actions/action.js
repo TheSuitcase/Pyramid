@@ -1,4 +1,6 @@
 import RenderEngine from '../renderengine'
+import Colors from '../colors'
+import Delimiter from '../delimiter'
 
 class Action {
   constructor () {
@@ -8,9 +10,18 @@ class Action {
       this.state = this.initialState()
     }
   }
+  getColors () {
+    return Colors
+  }
+  getDelimiter () {
+    return Delimiter.get.bind(Delimiter)
+  }
   setState (data) {
     Object.assign(this.state, data)
     RenderEngine.render(this)
+  }
+  setResponse (...args) {
+    RenderEngine.setResponse(args)
   }
 }
 

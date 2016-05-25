@@ -59,7 +59,7 @@ class Command {
     this.state.syntax.generate()
     this.state.help.generate()
 
-    return this
+    return this.state.arguments
   }
 
   /*

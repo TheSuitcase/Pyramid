@@ -119,7 +119,7 @@ var Command = (function () {
       this.state.syntax.generate();
       this.state.help.generate();
 
-      return this;
+      return this.state.arguments;
     }
 
     /*

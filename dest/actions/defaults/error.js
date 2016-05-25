@@ -10,6 +10,10 @@ var _action = require('../action');
 
 var _action2 = _interopRequireDefault(_action);
 
+var _colors = require('../../colors');
+
+var _colors2 = _interopRequireDefault(_colors);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18,16 +22,19 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Log = (function (_Action) {
-  _inherits(Log, _Action);
+// Lowercase error because `Error` is
+// a reserved word in javascript.
 
-  function Log() {
-    _classCallCheck(this, Log);
+var error = (function (_Action) {
+  _inherits(error, _Action);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Log).apply(this, arguments));
+  function error() {
+    _classCallCheck(this, error);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(error).apply(this, arguments));
   }
 
-  _createClass(Log, [{
+  _createClass(error, [{
     key: 'componentShouldClose',
     value: function componentShouldClose() {
       return true;
@@ -35,11 +42,11 @@ var Log = (function (_Action) {
   }, {
     key: 'render',
     value: function render() {
-      return this.props[0];
+      return _colors2.default.red(this.props[0]);
     }
   }]);
 
-  return Log;
+  return error;
 })(_action2.default);
 
-exports.default = Log;
+exports.default = error;

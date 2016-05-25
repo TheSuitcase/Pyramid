@@ -28,11 +28,16 @@ var _checkbox = require('./defaults/checkbox');
 
 var _checkbox2 = _interopRequireDefault(_checkbox);
 
+var _error = require('./defaults/error');
+
+var _error2 = _interopRequireDefault(_error);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Actions = {
   actions: {
     log: _log2.default,
+    error: _error2.default,
     wait: _wait2.default,
     confirm: _confirm2.default,
     checkbox: _checkbox2.default
@@ -60,14 +65,6 @@ var Actions = {
 
       scope[key] = queue.addWithScope.bind(queue, scope, _this.actions[key]);
     });
-  },
-  execute: function execute(command) {
-    // Merge command an state queue.
-    if (command) {
-      _state2.default.actions.merge(command.state.actions);
-    }
-    // console.log(State.actions)
-    _renderengine2.default.start();
   }
 };
 

@@ -71,6 +71,10 @@ let Screen = {
       process.stdout.write('\n')
     }
 
+    if (State.command && State.command.state.callbacks.exit) {
+      State.command.state.callbacks.exit()
+    }
+
     if (State.callbacks.exit) {
       State.callbacks.exit()
     }

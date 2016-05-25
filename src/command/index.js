@@ -88,31 +88,19 @@ class Command {
    */
   validate (cb) {
     if (!TypeOf(cb, 'function')) { return this; }
-    this.state.set({
-      callbacks: {
-        validate: cb
-      }
-    })
+    this.state.callbacks.validate = cb
     return this
   }
 
   action (cb) {
     if (!TypeOf(cb, 'function')) { return this; }
-    this.state.set({
-      callbacks: {
-        action: cb
-      }
-    })
+    this.state.callbacks.action = cb
     return this
   }
 
   exit (cb) {
     if (!TypeOf(cb, 'function')) { return this; }
-    this.state.set({
-      callbacks: {
-        exit: cb
-      }
-    })
+    this.state.callbacks.exit = cb
     return this
   }
 }

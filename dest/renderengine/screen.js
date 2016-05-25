@@ -92,6 +92,10 @@ var Screen = {
       process.stdout.write('\n');
     }
 
+    if (_state2.default.command && _state2.default.command.state.callbacks.exit) {
+      _state2.default.command.state.callbacks.exit();
+    }
+
     if (_state2.default.callbacks.exit) {
       _state2.default.callbacks.exit();
     }

@@ -52,6 +52,16 @@ let Pyramid = {
     return State.commands[command] = new Command(command)
   },
 
+  addAction(...args) {
+    Actions.add.apply(Actions, args)
+    return this
+  },
+
+  removeAction(...args) {
+    Actions.remove.apply(Actions, args)
+    return this
+  },
+
   // Callbacks.
   action(cb) {
     if (!TypeOf(cb, 'function')) { return }

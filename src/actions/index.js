@@ -1,5 +1,6 @@
 import State from '../state'
 import RenderEngine from '../renderengine'
+import Typeof from '../util/typeof'
 
 import Log from './defaults/log'
 import Wait from './defaults/wait'
@@ -8,6 +9,7 @@ import Checkbox from './defaults/checkbox'
 import ErrorAction from './defaults/error'
 
 let Actions = {
+  irremovable: [],
   actions: {
     log: Log,
     error: ErrorAction,
@@ -15,13 +17,33 @@ let Actions = {
     confirm: Confirm,
     checkbox: Checkbox
   },
-  add(name, action) {
-    this.actions[name] = action
+  collectIrremovableActions() {
+    this.irremovable = Object.keys(this.actions)
+  },
+  add(actions, action) {
+    if (Typeof(actions, 'string')) {
+      actions = {[actions]: action}
+    }
+
+    let keys = Object.keys(actions)
+
+    keys.forEach((name) => {
+      if (this.irremovable.indexOf(name) > -1) { return false; }
+      this.actions[name] = actions[name]
+    })
+
     return true
   },
-  remove(name) {
-    if (!this.actions[name]) { return false; }
-    delete this.actions[name]
+  remove(...actions) {
+    actions.forEach((action) => {
+      if (Typeof(action, 'array')) {
+        Actions.remove(action)
+        return
+      }
+      if (!this.actions[action]) { return false; }
+      if (this.irremovable.indexOf(action) > -1) { return false; }
+      delete this.actions[action]
+    })
     return true
   },
   merge(scope, queue) {
@@ -36,5 +58,7 @@ let Actions = {
     })
   }
 }
+
+Actions.collectIrremovableActions()
 
 export default Actions

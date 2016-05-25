@@ -98,6 +98,22 @@ var Pyramid = {
     }
     return _state2.default.commands[_command] = new _command3.default(_command);
   },
+  addAction: function addAction() {
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    _actions2.default.add.apply(_actions2.default, args);
+    return this;
+  },
+  removeAction: function removeAction() {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    _actions2.default.remove.apply(_actions2.default, args);
+    return this;
+  },
 
   // Callbacks.
   action: function action(cb) {

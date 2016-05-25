@@ -2,6 +2,7 @@ import Pyramid from '../pyramid'
 import Actions from '../actions'
 import State from '../state'
 import RenderEngine from '../renderengine'
+import Screen from '../renderengine/screen'
 
 let Executer = {
   parse(input = process.argv) {
@@ -20,6 +21,7 @@ let Executer = {
 
     // Parse the command and handle the errors
     if (command) {
+      State.set({command})
       errors = this.parseCommand(command, input)
     }
 
@@ -39,12 +41,16 @@ let Executer = {
     if (command && command.state.callbacks.action) {
       let args = command.state.arguments
 
-      command.state.callbacks.action(
+      let exit = command.state.callbacks.action(
         args.required,
         args.optional,
         args.options,
         answers
       )
+
+      if (exit !== false) {
+        Screen.exit()
+      }
     }
   },
   combineActionQueues(command) {

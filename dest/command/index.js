@@ -164,11 +164,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(cb, 'function')) {
         return this;
       }
-      this.state.set({
-        callbacks: {
-          validate: cb
-        }
-      });
+      this.state.callbacks.validate = cb;
       return this;
     }
   }, {
@@ -177,11 +173,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(cb, 'function')) {
         return this;
       }
-      this.state.set({
-        callbacks: {
-          action: cb
-        }
-      });
+      this.state.callbacks.action = cb;
       return this;
     }
   }, {
@@ -190,11 +182,7 @@ var Command = (function () {
       if (!(0, _typeof2.default)(cb, 'function')) {
         return this;
       }
-      this.state.set({
-        callbacks: {
-          exit: cb
-        }
-      });
+      this.state.callbacks.exit = cb;
       return this;
     }
   }]);

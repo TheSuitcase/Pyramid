@@ -20,6 +20,10 @@ var _renderengine = require('../renderengine');
 
 var _renderengine2 = _interopRequireDefault(_renderengine);
 
+var _screen = require('../renderengine/screen');
+
+var _screen2 = _interopRequireDefault(_screen);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Executer = {
@@ -43,6 +47,7 @@ var Executer = {
 
     // Parse the command and handle the errors
     if (command) {
+      _state2.default.set({ command: command });
       errors = this.parseCommand(command, input);
     }
 
@@ -62,7 +67,11 @@ var Executer = {
     if (command && command.state.callbacks.action) {
       var args = command.state.arguments;
 
-      command.state.callbacks.action(args.required, args.optional, args.options, answers);
+      var exit = command.state.callbacks.action(args.required, args.optional, args.options, answers);
+
+      if (exit !== false) {
+        _screen2.default.exit();
+      }
     }
   },
   combineActionQueues: function combineActionQueues(command) {

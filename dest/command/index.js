@@ -70,10 +70,10 @@ var Command = (function () {
       // Store the order of actions.
       actions: new _queue2.default(),
 
-      callback: {
+      callbacks: {
         validate: undefined,
         action: undefined,
-        done: undefined
+        exit: undefined
       }
     });
 
@@ -161,8 +161,11 @@ var Command = (function () {
   }, {
     key: 'validate',
     value: function validate(cb) {
+      if (!(0, _typeof2.default)(cb, 'function')) {
+        return this;
+      }
       this.state.set({
-        callback: {
+        callbacks: {
           validate: cb
         }
       });
@@ -171,19 +174,25 @@ var Command = (function () {
   }, {
     key: 'action',
     value: function action(cb) {
+      if (!(0, _typeof2.default)(cb, 'function')) {
+        return this;
+      }
       this.state.set({
-        callback: {
+        callbacks: {
           action: cb
         }
       });
       return this;
     }
   }, {
-    key: 'done',
-    value: function done(cb) {
+    key: 'exit',
+    value: function exit(cb) {
+      if (!(0, _typeof2.default)(cb, 'function')) {
+        return this;
+      }
       this.state.set({
-        callback: {
-          done: cb
+        callbacks: {
+          exit: cb
         }
       });
       return this;

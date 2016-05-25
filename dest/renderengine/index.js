@@ -59,6 +59,10 @@ var RenderEngine = {
   response: undefined,
   responses: [],
 
+  active: false,
+
+  cb: undefined,
+
   /*
     Setups
    */
@@ -71,13 +75,26 @@ var RenderEngine = {
   setup: function setup() {
     this.setupListeners();
   },
-  start: function start() {
+  start: function start(cb) {
+    if (this.active) {
+      return false;
+    }
+    this.active = true;
+    this.cb = cb;
     // Start the whole process.
     this.listen();
     this.render();
+    return true;
   },
   finished: function finished() {
-    console.log(this.responses);
+    if (this.active === false) {
+      return;
+    }
+    this.active = false;
+    if (this.cb) {
+      this.cb(this.responses);
+      return;
+    }
     _screen2.default.exit(RenderEngine.exitOnFirstRender ? false : true);
   },
   setResponse: function setResponse() {
@@ -87,7 +104,6 @@ var RenderEngine = {
   },
   setAction: function setAction() {
     if (!_state2.default.actions.queue[0]) {
-      RE.finished();
       return;
     }
 

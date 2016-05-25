@@ -107,6 +107,7 @@ var Pyramid = {
     _state2.default.set({ callbacks: {
         action: cb
       } });
+    return this;
   },
   validate: function validate(cb) {
     if (!(0, _typeof2.default)(cb, 'function')) {
@@ -115,6 +116,7 @@ var Pyramid = {
     _state2.default.set({ callbacks: {
         validate: cb
       } });
+    return this;
   },
   exit: function exit(cb) {
     if (!(0, _typeof2.default)(cb, 'function')) {
@@ -123,9 +125,11 @@ var Pyramid = {
     _state2.default.set({ callbacks: {
         exit: cb
       } });
+    return this;
   },
   parse: function parse() {
     _executer2.default.parse.apply(_executer2.default, arguments);
+    return this;
   }
 };
 

@@ -58,6 +58,7 @@ let Pyramid = {
     State.set({callbacks: {
         action: cb
     }})
+    return this
   },
 
   validate(cb) {
@@ -65,6 +66,7 @@ let Pyramid = {
     State.set({callbacks: {
         validate: cb
     }})
+    return this
   },
 
   exit(cb) {
@@ -72,10 +74,12 @@ let Pyramid = {
     State.set({callbacks: {
         exit: cb
     }})
+    return this
   },
 
   parse() {
     Executer.parse.apply(Executer, arguments)
+    return this
   }
 
 }

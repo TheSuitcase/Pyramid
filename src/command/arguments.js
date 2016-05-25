@@ -1,3 +1,5 @@
+import Typeof from '../util/typeof'
+
 class Arguments {
   constructor (command) {
     this.command = command
@@ -28,7 +30,45 @@ class Arguments {
     }
 
     this.collectionOptions(clonedArgs)
+
+    // Checkpoint!
+    if (this.errors.length > 0) {
+      return this
+    }
+
+    // User validate
+    if (this.command.state.callbacks.validate) {
+      this.validateWithUser()
+    }
+
     return this
+  }
+  validateWithUser () {
+    // NOTE: true and undefined will be ignore as a result!
+    let result = this.command.state.callbacks.validate(
+      this.required,
+      this.optional,
+      this.options
+    )
+
+    if (result === false) {
+      this.errors.push('You command is invalid!')
+      return
+    }
+
+    if (Typeof(result, 'array')) {
+      result.forEach((error) => {
+        this.errors.push(error)
+      })
+      return
+    }
+
+    if (Typeof(result, 'string')) {
+      this.errors.push(result)
+      return
+    }
+
+    return
   }
   collectRequiredArguments (args) {
     // Clear out the old.
@@ -57,7 +97,7 @@ class Arguments {
       if (arg.validate) {
         let valid = arg.validate(input)
 
-        if (!valid) {
+        if (valid === false) {
           this.errors.push(`The argument ${input} is invalid!`)
           return
         }else if (valid !== true) {
@@ -97,7 +137,7 @@ class Arguments {
       if (arg.validate) {
         let valid = arg.validate(input)
 
-        if (!valid) {
+        if (valid === false) {
           this.errors.push(`The argument ${input} is invalid!`)
           return
         }else if (valid !== true) {
@@ -145,7 +185,7 @@ class Arguments {
         if (validInput !== false && option.validate) {
           let valid = option.validate(input)
 
-          if (!valid) {
+          if (valid === false) {
             this.errors.push(`The argument ${input} is invalid!`)
             return
           }else if (valid !== true) {

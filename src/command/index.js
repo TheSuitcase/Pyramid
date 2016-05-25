@@ -29,10 +29,10 @@ class Command {
       // Store the order of actions.
       actions: new Queue(),
 
-      callback: {
+      callbacks: {
         validate: undefined,
         action: undefined,
-        done: undefined,
+        exit: undefined,
       },
     })
 
@@ -87,8 +87,9 @@ class Command {
    * Callbacks
    */
   validate (cb) {
+    if (!TypeOf(cb, 'function')) { return this; }
     this.state.set({
-      callback: {
+      callbacks: {
         validate: cb
       }
     })
@@ -96,18 +97,20 @@ class Command {
   }
 
   action (cb) {
+    if (!TypeOf(cb, 'function')) { return this; }
     this.state.set({
-      callback: {
+      callbacks: {
         action: cb
       }
     })
     return this
   }
 
-  done (cb) {
+  exit (cb) {
+    if (!TypeOf(cb, 'function')) { return this; }
     this.state.set({
-      callback: {
-        done: cb
+      callbacks: {
+        exit: cb
       }
     })
     return this

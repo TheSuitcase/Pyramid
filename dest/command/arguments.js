@@ -6,6 +6,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+var _typeof = require('../util/typeof');
+
+var _typeof2 = _interopRequireDefault(_typeof);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Arguments = (function () {
@@ -45,7 +51,45 @@ var Arguments = (function () {
       }
 
       this.collectionOptions(clonedArgs);
+
+      // Checkpoint!
+      if (this.errors.length > 0) {
+        return this;
+      }
+
+      // User validate
+      if (this.command.state.callbacks.validate) {
+        this.validateWithUser();
+      }
+
       return this;
+    }
+  }, {
+    key: 'validateWithUser',
+    value: function validateWithUser() {
+      var _this = this;
+
+      // NOTE: true and undefined will be ignore as a result!
+      var result = this.command.state.callbacks.validate(this.required, this.optional, this.options);
+
+      if (result === false) {
+        this.errors.push('You command is invalid!');
+        return;
+      }
+
+      if ((0, _typeof2.default)(result, 'array')) {
+        result.forEach(function (error) {
+          _this.errors.push(error);
+        });
+        return;
+      }
+
+      if ((0, _typeof2.default)(result, 'string')) {
+        this.errors.push(result);
+        return;
+      }
+
+      return;
     }
   }, {
     key: 'collectRequiredArguments',
@@ -77,7 +121,7 @@ var Arguments = (function () {
         if (arg.validate) {
           var valid = arg.validate(input);
 
-          if (!valid) {
+          if (valid === false) {
             this.errors.push('The argument ' + input + ' is invalid!');
             return;
           } else if (valid !== true) {
@@ -119,7 +163,7 @@ var Arguments = (function () {
         if (arg.validate) {
           var valid = arg.validate(input);
 
-          if (!valid) {
+          if (valid === false) {
             this.errors.push('The argument ' + input + ' is invalid!');
             return;
           } else if (valid !== true) {
@@ -134,7 +178,7 @@ var Arguments = (function () {
   }, {
     key: 'collectionOptions',
     value: function collectionOptions(args) {
-      var _this = this;
+      var _this2 = this;
 
       this.options = {};
 
@@ -164,7 +208,7 @@ var Arguments = (function () {
           if (input && input.indexOf('-') === -1) {
             validInput = input;
           } else {
-            _this.errors.push('The option ' + option.name + ' is missing a value!');
+            _this2.errors.push('The option ' + option.name + ' is missing a value!');
             return;
           }
 
@@ -173,18 +217,18 @@ var Arguments = (function () {
           if (validInput !== false && option.validate) {
             var valid = option.validate(input);
 
-            if (!valid) {
-              _this.errors.push('The argument ' + input + ' is invalid!');
+            if (valid === false) {
+              _this2.errors.push('The argument ' + input + ' is invalid!');
               return;
             } else if (valid !== true) {
-              _this.errors.push(valid);
+              _this2.errors.push(valid);
               return;
             }
           }
 
           // Store the input
           if (validInput) {
-            _this.options[option.name] = validInput;
+            _this2.options[option.name] = validInput;
           }
         }
       });

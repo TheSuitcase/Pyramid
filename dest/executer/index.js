@@ -56,11 +56,14 @@ var Executer = {
       this.combineActionQueues(command);
     }
 
-    if (command) {
-      console.log(command.state.parameters.errors);
-    }
+    _renderengine2.default.start(this.renderEngineDidFinish.bind(this, command));
+  },
+  renderEngineDidFinish: function renderEngineDidFinish(command, answers) {
+    if (command && command.state.callbacks.action) {
+      var args = command.state.arguments;
 
-    _renderengine2.default.start();
+      command.state.callbacks.action(args.required, args.optional, args.options, answers);
+    }
   },
   combineActionQueues: function combineActionQueues(command) {
     _state2.default.actions.merge(command.state.actions);

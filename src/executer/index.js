@@ -33,11 +33,19 @@ let Executer = {
       this.combineActionQueues(command)
     }
 
-    if (command) {
-      console.log(command.state.parameters.errors)
-    }
+    RenderEngine.start(this.renderEngineDidFinish.bind(this, command))
+  },
+  renderEngineDidFinish(command, answers) {
+    if (command && command.state.callbacks.action) {
+      let args = command.state.arguments
 
-    RenderEngine.start()
+      command.state.callbacks.action(
+        args.required,
+        args.optional,
+        args.options,
+        answers
+      )
+    }
   },
   combineActionQueues(command) {
     State.actions.merge(command.state.actions)

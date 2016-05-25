@@ -22,6 +22,10 @@ let RenderEngine = {
   response: undefined,
   responses: [],
 
+  active: false,
+
+  cb: undefined,
+
   /*
     Setups
    */
@@ -36,14 +40,23 @@ let RenderEngine = {
     this.setupListeners()
   },
 
-  start() {
+  start(cb) {
+    if (this.active) { return false; }
+    this.active = true
+    this.cb = cb
     // Start the whole process.
     this.listen()
     this.render()
+    return true
   },
 
   finished() {
-    console.log(this.responses)
+    if (this.active === false) { return; }
+    this.active = false
+    if (this.cb) {
+      this.cb(this.responses)
+      return
+    }
     Screen.exit(RenderEngine.exitOnFirstRender ? false : true)
   },
 
@@ -53,7 +66,6 @@ let RenderEngine = {
 
   setAction() {
     if (!State.actions.queue[0]) {
-      RE.finished()
       return
     }
 

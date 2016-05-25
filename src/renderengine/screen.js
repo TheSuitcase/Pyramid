@@ -9,6 +9,7 @@
 import AnsiEscapes from 'ansi-escapes'
 import Readline from './readline'
 import RenderEngine from './index'
+import State from '../state'
 
 let Screen = {
   /**
@@ -69,6 +70,11 @@ let Screen = {
     if (RenderEngine.lastRenderWasWithScreenManager) {
       process.stdout.write('\n')
     }
+
+    if (State.callbacks.exit) {
+      State.callbacks.exit()
+    }
+
     process.exit()
   }
 }

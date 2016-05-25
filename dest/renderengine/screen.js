@@ -16,7 +16,20 @@ var _index = require('./index');
 
 var _index2 = _interopRequireDefault(_index);
 
+var _state = require('../state');
+
+var _state2 = _interopRequireDefault(_state);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+  Disclaimer
+  This file is heavily inspired by Inquirer.js
+
+  Source: Inquirer.js
+  File: readline.js
+  Url: https://github.com/SBoudrias/Inquirer.js/blob/66471210718ce92928ab5a6cc9a58fb70fc5d9d9/lib/utils/readline.js
+ */
 
 var Screen = {
   /**
@@ -78,16 +91,14 @@ var Screen = {
     if (_index2.default.lastRenderWasWithScreenManager) {
       process.stdout.write('\n');
     }
+
+    if (_state2.default.callbacks.exit) {
+      _state2.default.callbacks.exit();
+    }
+
     process.exit();
   }
-}; /*
-     Disclaimer
-     This file is heavily inspired by Inquirer.js
-   
-     Source: Inquirer.js
-     File: readline.js
-     Url: https://github.com/SBoudrias/Inquirer.js/blob/66471210718ce92928ab5a6cc9a58fb70fc5d9d9/lib/utils/readline.js
-    */
+};
 
 Screen.start();
 

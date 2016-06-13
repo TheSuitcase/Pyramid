@@ -7,6 +7,8 @@ import Wait from './defaults/wait'
 import Confirm from './defaults/confirm'
 import Checkbox from './defaults/checkbox'
 import ErrorAction from './defaults/error'
+import Autocomplete from './defaults/autocomplete'
+import Help from './defaults/help'
 
 let Actions = {
   irremovable: [],
@@ -15,7 +17,9 @@ let Actions = {
     error: ErrorAction,
     wait: Wait,
     confirm: Confirm,
-    checkbox: Checkbox
+    checkbox: Checkbox,
+    autocomplete: Autocomplete,
+    help: Help
   },
   collectIrremovableActions() {
     this.irremovable = Object.keys(this.actions)

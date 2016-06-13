@@ -47,14 +47,14 @@ var Help = (function () {
         help = help.concat(this.collectParameter(this.command.state.parameters.options, 'option  ', _colors2.default.blue));
       }
 
-      if (this.command.state.help) {
+      if (this.command.state.example) {
         help.push(_colors2.default.blur('----------------------------'));
-        help.push([_colors2.default.purple('help  '), '    ', this.command.state.help].join(' '));
+        help.push([_colors2.default.purple('example '), '    ', this.command.state.example].join(' '));
       }
 
       if (this.command.state.docs) {
         help.push(_colors2.default.blur('----------------------------'));
-        help.push([_colors2.default.cyan('docs  '), '    ', this.command.state.docs].join(' '));
+        help.push([_colors2.default.cyan('docs    '), '    ', this.command.state.docs].join(' '));
       }
 
       this.help = help;
@@ -68,7 +68,7 @@ var Help = (function () {
 
       var keys = Object.keys(params);
       return keys.map(function (key) {
-        return [color(tag), '    ', params[key].name, _colors2.default.blur('- ' + params[key].description)].join(' ');
+        return [color(tag), '    ', params[key].name, params[key].description ? _colors2.default.blur('- ' + params[key].description) : ''].join(' ');
       });
     }
   }]);

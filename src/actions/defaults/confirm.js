@@ -2,6 +2,7 @@ import Action from '../action'
 import Colors from '../../colors'
 import Chalk from 'chalk'
 import clc from 'cli-color'
+import State from '../../state'
 
 class Confirm extends Action {
   componentDidUnmount () {
@@ -21,7 +22,7 @@ class Confirm extends Action {
     this.input.clear()
   }
   userInputDidFireEvent (event) {
-    if (event === 'return') {
+    if (event === 'return' && this.state.confirm !== undefined) {
       this.setState({exit: true})
     }
   }
@@ -39,7 +40,7 @@ class Confirm extends Action {
       confirm = ''
     }
     return [
-      (this.props[0] || 'Are you sure?') + '[Y/n]' + Chalk.cyan(confirm)
+      this.getDelimiter() + (this.props[0] || 'Are you sure?') + ' [Y/n]' + State.colors.default(confirm)
     ]
   }
 }

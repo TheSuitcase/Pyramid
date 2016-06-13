@@ -5,9 +5,11 @@ import TypeOf from './util/typeof'
 import Command from './command'
 import Actions from './actions'
 import Executer from './executer'
+import Colors from './colors'
 
 let Pyramid = {
   Action, State,
+  colors: Colors,
 
   version(version = '0.0.0') {
     if (!TypeOf(version, 'string')) { return this; }
@@ -28,7 +30,21 @@ let Pyramid = {
   },
 
   color(colors) {
+    if (TypeOf(color, 'string')) {
+      State.set({colors: {
+          default: color
+      }})
+      return this
+    }
+
     if (!TypeOf(colors, 'object')) { return this; }
+
+    for (let i in colors) {
+      if (!Typeof(i, 'function')) {
+        delete colors[i]
+      }
+    }
+
     State.set({colors})
     return this
   },
@@ -42,6 +58,13 @@ let Pyramid = {
     }
 
     if (!TypeOf(delimiter, 'object')) { return this}
+
+    // Only strings are allowed.
+    for (let i in delimiter) {
+      if (!Typeof(i, 'string')) {
+        delete delimiter[i]
+      }
+    }
 
     State.set({delimiter})
     return this
@@ -65,25 +88,25 @@ let Pyramid = {
   // Callbacks.
   action(cb) {
     if (!TypeOf(cb, 'function')) { return }
-    State.set({callbacks: {
-        action: cb
-    }})
+    State.callbacks.action = cb
     return this
   },
 
   validate(cb) {
     if (!TypeOf(cb, 'function')) { return }
-    State.set({callbacks: {
-        validate: cb
-    }})
+    State.callbacks.validate = cb
     return this
   },
 
   exit(cb) {
     if (!TypeOf(cb, 'function')) { return }
-    State.set({callbacks: {
-        exit: cb
-    }})
+    State.callbacks.exit = cb
+    return this
+  },
+
+  overflow(cb) {
+    if (!TypeOf(cb, 'function')) { return }
+    State.callbacks.overflow = cb
     return this
   },
 

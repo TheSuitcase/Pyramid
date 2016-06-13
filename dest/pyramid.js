@@ -120,27 +120,28 @@ var Pyramid = {
     if (!(0, _typeof2.default)(cb, 'function')) {
       return;
     }
-    _state2.default.set({ callbacks: {
-        action: cb
-      } });
+    _state2.default.callbacks.action = cb;
     return this;
   },
   validate: function validate(cb) {
     if (!(0, _typeof2.default)(cb, 'function')) {
       return;
     }
-    _state2.default.set({ callbacks: {
-        validate: cb
-      } });
+    _state2.default.callbacks.validate = cb;
     return this;
   },
   exit: function exit(cb) {
     if (!(0, _typeof2.default)(cb, 'function')) {
       return;
     }
-    _state2.default.set({ callbacks: {
-        exit: cb
-      } });
+    _state2.default.callbacks.exit = cb;
+    return this;
+  },
+  overflow: function overflow(cb) {
+    if (!(0, _typeof2.default)(cb, 'function')) {
+      return;
+    }
+    _state2.default.callbacks.overflow = cb;
     return this;
   },
   parse: function parse() {

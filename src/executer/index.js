@@ -3,6 +3,7 @@ import Actions from '../actions'
 import State from '../state'
 import RenderEngine from '../renderengine'
 import Screen from '../renderengine/screen'
+import Typeof from '../util/typeof'
 
 let Executer = {
   parse(input = process.argv) {
@@ -19,7 +20,6 @@ let Executer = {
       command = this.findMatchingCommand(input)
     }
 
-    // Parse the command and handle the errors
     if (command) {
       State.set({command})
       errors = this.parseCommand(command, input)
@@ -31,7 +31,7 @@ let Executer = {
     }
 
     // Combine the action queues
-    if (!errors) {
+    if (command && !errors) {
       this.combineActionQueues(command)
     }
 
@@ -48,10 +48,30 @@ let Executer = {
         answers
       )
 
+      if (State.actions.queue.length > 0) {
+        RenderEngine.start(this.renderEngineDidFinish.bind(this, command))
+        return
+      }
+
       if (exit !== false) {
         Screen.exit()
+        return
       }
+    } else {
+      Screen.exit()
     }
+  },
+  callOverflowCallback() {
+    if (!State.callbacks.overflow) { return; }
+    let errors = State.callbacks.overflow()
+
+    if (!Typeof(errors, 'string', 'array')) { return; }
+
+    if (Typeof(errors, 'string')) {
+      errors = [errors]
+    }
+
+    return errors
   },
   combineActionQueues(command) {
     State.actions.merge(command.state.actions)
@@ -75,11 +95,19 @@ let Executer = {
   findMatchingCommand(input) {
     let command = State.commands[input[0]]
 
-    if (!command) {
-      Pyramid.error(`Your command ${input[0]} does not exist!`)
+    if (command) { return command }
+
+    let errors = this.callOverflowCallback(input) || []
+
+    if (errors.length === 0) {
+      errors.push(`Your command ${input[0]} does not exist!`)
     }
 
-    return command
+    errors.forEach((error) => {
+      Pyramid.error(error)
+    })
+
+    return
   },
   prepareInput(input) {
     if (input === process.argv) {

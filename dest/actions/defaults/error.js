@@ -42,7 +42,7 @@ var error = (function (_Action) {
   }, {
     key: 'render',
     value: function render() {
-      return _colors2.default.red(this.props[0]);
+      return _colors2.default.gray('[Suitcase]') + ' ' + _colors2.default.red('X') + ' ' + this.props[0];
     }
   }]);
 

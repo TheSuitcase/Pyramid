@@ -14,7 +14,7 @@ class Action {
     return Colors
   }
   getDelimiter () {
-    return Delimiter.get.bind(Delimiter)
+    return Delimiter.get.apply(Delimiter)
   }
   setState (data) {
     Object.assign(this.state, data)

@@ -2,6 +2,7 @@ import Action from '../action'
 import Colors from '../../colors'
 import Chalk from 'chalk'
 import clc from 'cli-color'
+import State from '../../state'
 
 class Checkbox extends Action {
   initialState () {
@@ -52,7 +53,7 @@ class Checkbox extends Action {
     this.props.forEach((item, pos) => {
       items.push([
         '- [',
-        this.state.position === pos ? 'x' : ' ',
+        State.colors.default(this.state.position === pos ? 'x' : ' '),
         ']',
         ' ' + item
       ].join(''))
@@ -62,12 +63,12 @@ class Checkbox extends Action {
   }
   render () {
     let output = [
-      'Checkboxes: (Use your `up` and `down` keys to navigate)',
+      this.getDelimiter() + 'Checkboxes: (Use your `up` and `down` keys to navigate)',
     ]
 
     output = output.concat(this.renderItems())
 
-    return this.state.exit ? 'Checkboxes: ' + Chalk.cyan(this.props[this.state.position]) : output
+    return this.state.exit ? this.getDelimiter() + 'Checkboxes: ' + State.colors.default(this.props[this.state.position]) : output
   }
 }
 

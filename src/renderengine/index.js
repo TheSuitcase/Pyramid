@@ -44,8 +44,15 @@ let RenderEngine = {
     if (this.active) { return false; }
     this.active = true
     this.cb = cb
+    this.responses = []
     // Start the whole process.
     this.listen()
+
+    if (State.actions.queue.length === 0) {
+      cb()
+      return
+    }
+
     this.render()
     return true
   },

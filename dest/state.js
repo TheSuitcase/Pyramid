@@ -48,6 +48,7 @@ exports.default = new _state2.default({
     warning: undefined
   },
   colors: {
+    default: _colors2.default.yellow,
     text: _colors2.default.white,
     error: _colors2.default.red,
     success: _colors2.default.green,

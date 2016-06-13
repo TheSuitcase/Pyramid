@@ -32,41 +32,34 @@ var Wait = (function (_Action) {
     value: function initialState() {
       return {
         exit: false,
-        input: '',
-        events: []
+        time: 2, // in seconds.
+        current: 0,
+        output: []
       };
     }
   }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.setState({ count: 0 });
-      // this.interval = setInterval(() => {
+      var _this2 = this;
 
-      //   if (this.state.count >= 10) {
-      //     this.setState({exit: true})
-      //     return
-      //   }
+      var time = this.props[0] || 2;
 
-      //   this.setState({count: this.state.count + 1})
-      // }, 100)
-    }
-  }, {
-    key: 'userInputDidUpdate',
-    value: function userInputDidUpdate(char) {
-      this.setState({ count: this.state.count + 1 });
-      if (this.state.count + 1 > 10) {
-        this.setState({ exit: true });
-      }
-      // console.log('userInputDidUpdate', char)
-      // this.setState({exit: true}) // input: this.state.input + char})
-    }
-  }, {
-    key: 'userInputDidFireEvent',
-    value: function userInputDidFireEvent(event) {
-      // console.log('userInputDidFireEvent', event)
-      // let events = this.state.events
-      // events.push(event)
-      // this.setState({events})
+      this.setState({ time: time });
+
+      this.interval = setInterval(function () {
+
+        var current = _this2.state.current;
+        var output = _this2.state.output;
+
+        if (current < _this2.state.time) {
+          current++;
+
+          output.push(_this2.getDelimiter() + ('Wait ' + (time - current) + ' seconds!'));
+          _this2.setState({ current: current, output: output });
+        } else {
+          _this2.setState({ exit: true });
+        }
+      }, 1000);
     }
   }, {
     key: 'componentDidUnmount',
@@ -81,7 +74,15 @@ var Wait = (function (_Action) {
   }, {
     key: 'render',
     value: function render() {
-      return ['[' + this.state.count + ']' + this.input.string];
+      var output = [];
+      if (this.state.exit) {
+        output = [this.getDelimiter() + ('You waited ' + this.state.time + ' seconds!')];
+      } else {
+        output.push(this.getDelimiter() + ('You just have to wait ' + this.state.time + ' seconds!'));
+
+        output = output.concat(this.state.output);
+      }
+      return output;
     }
   }]);
 

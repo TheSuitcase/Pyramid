@@ -22,13 +22,14 @@ export default new State({
   autocomplete: false,
   version: '0.0.0',
 
-  delimiters: {
+  delimiter: {
     default: '',
     error: undefined,
     success: undefined,
     warning: undefined,
   },
   colors: {
+    default: Colors.yellow,
     text: Colors.white,
     error: Colors.red,
     success: Colors.green,

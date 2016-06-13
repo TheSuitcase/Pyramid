@@ -81,8 +81,15 @@ var RenderEngine = {
     }
     this.active = true;
     this.cb = cb;
+    this.responses = [];
     // Start the whole process.
     this.listen();
+
+    if (_state2.default.actions.queue.length === 0) {
+      cb();
+      return;
+    }
+
     this.render();
     return true;
   },

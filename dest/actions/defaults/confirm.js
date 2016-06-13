@@ -22,6 +22,10 @@ var _cliColor = require('cli-color');
 
 var _cliColor2 = _interopRequireDefault(_cliColor);
 
+var _state = require('../../state');
+
+var _state2 = _interopRequireDefault(_state);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -64,7 +68,7 @@ var Confirm = (function (_Action) {
   }, {
     key: 'userInputDidFireEvent',
     value: function userInputDidFireEvent(event) {
-      if (event === 'return') {
+      if (event === 'return' && this.state.confirm !== undefined) {
         this.setState({ exit: true });
       }
     }
@@ -85,7 +89,7 @@ var Confirm = (function (_Action) {
       } else {
         confirm = '';
       }
-      return [(this.props[0] || 'Are you sure?') + '[Y/n]' + _chalk2.default.cyan(confirm)];
+      return [this.getDelimiter() + (this.props[0] || 'Are you sure?') + ' [Y/n]' + _state2.default.colors.default(confirm)];
     }
   }]);
 

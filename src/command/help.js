@@ -42,19 +42,19 @@ class Help {
       ))
     }
 
-    if (this.command.state.help) {
+    if (this.command.state.example) {
       help.push(Colors.blur('----------------------------'))
       help.push([
-        Colors.purple('help  '),
+        Colors.purple('example '),
         '    ',
-        this.command.state.help
+        this.command.state.example
       ].join(' '))
     }
 
     if (this.command.state.docs) {
       help.push(Colors.blur('----------------------------'))
       help.push([
-        Colors.cyan('docs  '),
+        Colors.cyan('docs    '),
         '    ',
         this.command.state.docs
       ].join(' '))
@@ -69,7 +69,7 @@ class Help {
         color(tag),
         '    ',
         params[key].name,
-        Colors.blur('- ' + params[key].description)
+        params[key].description ? Colors.blur('- ' + params[key].description) : ''
       ].join(' ')
     })
   }

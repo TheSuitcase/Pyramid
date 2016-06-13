@@ -22,6 +22,10 @@ var _cliColor = require('cli-color');
 
 var _cliColor2 = _interopRequireDefault(_cliColor);
 
+var _state = require('../../state');
+
+var _state2 = _interopRequireDefault(_state);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -101,7 +105,7 @@ var Checkbox = (function (_Action) {
       var items = [];
 
       this.props.forEach(function (item, pos) {
-        items.push(['- [', _this2.state.position === pos ? 'x' : ' ', ']', ' ' + item].join(''));
+        items.push(['- [', _state2.default.colors.default(_this2.state.position === pos ? 'x' : ' '), ']', ' ' + item].join(''));
       });
 
       return items;
@@ -109,11 +113,11 @@ var Checkbox = (function (_Action) {
   }, {
     key: 'render',
     value: function render() {
-      var output = ['Checkboxes: (Use your `up` and `down` keys to navigate)'];
+      var output = [this.getDelimiter() + 'Checkboxes: (Use your `up` and `down` keys to navigate)'];
 
       output = output.concat(this.renderItems());
 
-      return this.state.exit ? 'Checkboxes: ' + _chalk2.default.cyan(this.props[this.state.position]) : output;
+      return this.state.exit ? this.getDelimiter() + 'Checkboxes: ' + _state2.default.colors.default(this.props[this.state.position]) : output;
     }
   }]);
 

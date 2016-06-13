@@ -41,7 +41,7 @@ var Action = (function () {
   }, {
     key: 'getDelimiter',
     value: function getDelimiter() {
-      return _delimiter2.default.get.bind(_delimiter2.default);
+      return _delimiter2.default.get.apply(_delimiter2.default);
     }
   }, {
     key: 'setState',

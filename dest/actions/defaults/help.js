@@ -10,6 +10,10 @@ var _action = require('../action');
 
 var _action2 = _interopRequireDefault(_action);
 
+var _state = require('../../state');
+
+var _state2 = _interopRequireDefault(_state);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18,28 +22,34 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Log = (function (_Action) {
-  _inherits(Log, _Action);
+var Help = (function (_Action) {
+  _inherits(Help, _Action);
 
-  function Log() {
-    _classCallCheck(this, Log);
+  function Help() {
+    _classCallCheck(this, Help);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Log).apply(this, arguments));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Help).apply(this, arguments));
   }
 
-  _createClass(Log, [{
-    key: 'componentShouldClose',
-    value: function componentShouldClose() {
+  _createClass(Help, [{
+    key: 'componentShouldExit',
+    value: function componentShouldExit() {
       return true;
     }
   }, {
     key: 'render',
     value: function render() {
-      return this.getDelimiter() + this.props[0];
+      if (!_state2.default.command) {
+        return;
+      }
+
+      var command = _state2.default.command;
+
+      return command.state.help.get();
     }
   }]);
 
-  return Log;
+  return Help;
 })(_action2.default);
 
-exports.default = Log;
+exports.default = Help;

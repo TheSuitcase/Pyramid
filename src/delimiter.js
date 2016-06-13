@@ -1,6 +1,9 @@
+import Colors from './colors'
+import State from './state'
+
 let Delimiter = {
-  get(delimiter, color) {
-    return color(delimiter)
+  get() {
+    return State.colors.default(State.delimiter.default) + ' '
   }
 }
 

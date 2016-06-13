@@ -4,35 +4,30 @@ class Wait extends Action {
   initialState () {
     return {
       exit: false,
-      input: '',
-      events: [],
+      time: 2, // in seconds.
+      current: 0,
+      output: [],
     }
   }
   componentDidMount () {
-    this.setState({count: 0})
-    // this.interval = setInterval(() => {
+    let time = this.props[0] || 2
 
-    //   if (this.state.count >= 10) {
-    //     this.setState({exit: true})
-    //     return
-    //   }
+    this.setState({time})
 
-  //   this.setState({count: this.state.count + 1})
-  // }, 100)
-  }
-  userInputDidUpdate (char) {
-    this.setState({count: this.state.count + 1})
-    if (this.state.count + 1 > 10) {
-      this.setState({exit: true})
-    }
-  // console.log('userInputDidUpdate', char)
-  // this.setState({exit: true}) // input: this.state.input + char})
-  }
-  userInputDidFireEvent (event) {
-    // console.log('userInputDidFireEvent', event)
-    // let events = this.state.events
-    // events.push(event)
-    // this.setState({events})
+    this.interval = setInterval(() => {
+
+      let current = this.state.current
+      let output = this.state.output
+
+      if (current < this.state.time) {
+        current++
+
+        output.push(this.getDelimiter() + `Wait ${time - current} seconds!`)
+        this.setState({current, output})
+      } else {
+        this.setState({exit: true})
+      }
+    }, 1000)
   }
   componentDidUnmount () {
     clearInterval(this.interval)
@@ -41,9 +36,15 @@ class Wait extends Action {
     return this.state.exit || false
   }
   render () {
-    return [
-      '[' + this.state.count + ']' + this.input.string,
-    ]
+    let output = []
+    if (this.state.exit) {
+      output = [this.getDelimiter() + `You waited ${this.state.time} seconds!`]
+    } else {
+      output.push(this.getDelimiter() + `You just have to wait ${this.state.time} seconds!`)
+
+      output = output.concat(this.state.output)
+    }
+    return output
   }
 }
 

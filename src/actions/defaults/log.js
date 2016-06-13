@@ -5,7 +5,7 @@ class Log extends Action {
     return true
   }
   render () {
-    return this.props[0]
+    return this.getDelimiter() + this.props[0]
   }
 }
 

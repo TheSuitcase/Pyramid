@@ -7,7 +7,6 @@ import State from '../../state'
 class Confirm extends Action {
   componentDidUnmount () {
     this.setResponse(this.state.confirm)
-    clearInterval(this.interval)
   }
   userInputDidUpdate (char) {
     if (char === -1) { return }

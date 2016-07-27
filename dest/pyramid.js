@@ -32,48 +32,57 @@ var _executer = require('./executer');
 
 var _executer2 = _interopRequireDefault(_executer);
 
+var _colors = require('./colors');
+
+var _colors2 = _interopRequireDefault(_colors);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Pyramid = {
   Action: _action2.default, State: _state2.default,
+  colors: _colors2.default,
 
-  version: (function (_version) {
-    function version() {
-      return _version.apply(this, arguments);
-    }
+  version: function version() {
+    var _version = arguments.length <= 0 || arguments[0] === undefined ? '0.0.0' : arguments[0];
 
-    version.toString = function () {
-      return _version.toString();
-    };
-
-    return version;
-  })(function () {
-    var version = arguments.length <= 0 || arguments[0] === undefined ? '0.0.0' : arguments[0];
-
-    if (!(0, _typeof2.default)(version, 'string')) {
+    if (!(0, _typeof2.default)(_version, 'string')) {
       return this;
     }
-    _state2.default.set({ version: version });
+    _state2.default.set({ version: _version });
     return this;
-  }),
+  },
   welcome: function welcome(message) {
-    if (!(0, _typeof2.default)(version, 'string', 'array', 'undefined')) {
+    if (!(0, _typeof2.default)(message, 'string', 'array', 'undefined')) {
       return this;
     }
     _state2.default.set({ welcome: message });
     return this;
   },
   goodby: function goodby(message) {
-    if (!(0, _typeof2.default)(version, 'string', 'array', 'undefined')) {
+    if (!(0, _typeof2.default)(message, 'string', 'array', 'undefined')) {
       return this;
     }
     _state2.default.set({ goodby: message });
     return this;
   },
   color: function color(colors) {
+    if ((0, _typeof2.default)(colors, 'string')) {
+      _state2.default.set({ colors: {
+          default: colors
+        } });
+      return this;
+    }
+
     if (!(0, _typeof2.default)(colors, 'object')) {
       return this;
     }
+
+    for (var i in colors) {
+      if (!Typeof(i, 'function')) {
+        delete colors[i];
+      }
+    }
+
     _state2.default.set({ colors: colors });
     return this;
   },
@@ -87,6 +96,13 @@ var Pyramid = {
 
     if (!(0, _typeof2.default)(_delimiter, 'object')) {
       return this;
+    }
+
+    // Only strings are allowed.
+    for (var i in _delimiter) {
+      if (!Typeof(i, 'string')) {
+        delete _delimiter[i];
+      }
     }
 
     _state2.default.set({ delimiter: _delimiter });

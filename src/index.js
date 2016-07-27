@@ -1,7 +1,7 @@
-import Colors from './colors'
-import Delimiter from './delimiter'
+// import Colors from './colors'
+// import Delimiter from './delimiter'
 
-import State from './state'
+// import State from './state'
 
 import Pyramid from './Pyramid'
 

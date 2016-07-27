@@ -62,12 +62,6 @@ var Queue = (function () {
         args[_key2 - 1] = arguments[_key2];
       }
 
-      var length = args.length;
-      // let cb = args[length - 1]
-      // if (!Util.isFunction(cb)) {
-      //   cb = undefined
-      // }
-
       if (this.isActive) {
         // Add to the beginning of the queue.
         return this.queue.unshift({ action: action, args: args });

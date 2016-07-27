@@ -52,22 +52,6 @@ var Checkbox = (function (_Action) {
       };
     }
   }, {
-    key: 'userInputDidUpdate',
-    value: function userInputDidUpdate(char) {
-      if (char === -1) {
-        return;
-      }
-      char = char.toLowerCase();
-
-      if (char === 'y') {
-        this.setState({ confirm: true });
-      } else if (char === 'n') {
-        this.setState({ confirm: false });
-      }
-
-      this.input.clear();
-    }
-  }, {
     key: 'userInputDidFireEvent',
     value: function userInputDidFireEvent(event) {
       var position = this.state.position;
@@ -104,7 +88,7 @@ var Checkbox = (function (_Action) {
 
       var items = [];
 
-      this.props.forEach(function (item, pos) {
+      this.props[1].forEach(function (item, pos) {
         items.push(['- [', _state2.default.colors.default(_this2.state.position === pos ? 'x' : ' '), ']', ' ' + item].join(''));
       });
 
@@ -113,11 +97,11 @@ var Checkbox = (function (_Action) {
   }, {
     key: 'render',
     value: function render() {
-      var output = [this.getDelimiter() + 'Checkboxes: (Use your `up` and `down` keys to navigate)'];
+      var output = [this.getDelimiter() + (this.props[0] + ': '), _colors2.default.gray('(Use your \'up\' and \'down\' keys to navigate)')];
 
       output = output.concat(this.renderItems());
 
-      return this.state.exit ? this.getDelimiter() + 'Checkboxes: ' + _state2.default.colors.default(this.props[this.state.position]) : output;
+      return this.state.exit ? this.getDelimiter() + (this.props[0] + ': ') + _state2.default.colors.default(this.props[1][this.state.position]) : output;
     }
   }]);
 

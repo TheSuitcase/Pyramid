@@ -18,21 +18,21 @@ let Pyramid = {
   },
 
   welcome(message) {
-    if (!TypeOf(version, 'string', 'array', 'undefined')) { return this; }
+    if (!TypeOf(message, 'string', 'array', 'undefined')) { return this; }
     State.set({welcome: message})
     return this
   },
 
   goodby(message) {
-    if (!TypeOf(version, 'string', 'array', 'undefined')) { return this; }
+    if (!TypeOf(message, 'string', 'array', 'undefined')) { return this; }
     State.set({goodby: message})
     return this
   },
 
   color(colors) {
-    if (TypeOf(color, 'string')) {
+    if (TypeOf(colors, 'string')) {
       State.set({colors: {
-          default: color
+          default: colors
       }})
       return this
     }

@@ -8,7 +8,7 @@ class error extends Action {
     return true
   }
   render () {
-    return Colors.gray('[Suitcase]') + ' ' + Colors.red('X') + ' ' + this.props[0]
+    return Colors.gray(this.getDelimiter()) + Colors.red('X') + ' ' + this.props[0]
   }
 }
 

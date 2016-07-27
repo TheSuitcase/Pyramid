@@ -36,12 +36,12 @@ var typeIndex = {
 };
 
 var TypeOf = function TypeOf(value) {
-  if (arguments.length - 1 === 0) {
+  if ((arguments.length <= 1 ? 0 : arguments.length - 1) === 0) {
     return typeIndex[Object.prototype.toString.apply(value)] || undefined;
   }
 
   var i = 0,
-      len = arguments.length - 1;
+      len = arguments.length <= 1 ? 0 : arguments.length - 1;
   var type = undefined;
 
   var matches = 0;

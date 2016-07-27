@@ -21,7 +21,7 @@ class Action {
     RenderEngine.render(this)
   }
   setResponse (...args) {
-    RenderEngine.setResponse(args)
+    RenderEngine.setResponse.apply(RenderEngine, args)
   }
 }
 

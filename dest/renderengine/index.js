@@ -105,9 +105,11 @@ var RenderEngine = {
     _screen2.default.exit(RenderEngine.exitOnFirstRender ? false : true);
   },
   setResponse: function setResponse() {
-    var response = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    RE.response = response;
+    RE.response = args;
   },
   setAction: function setAction() {
     if (!_state2.default.actions.queue[0]) {

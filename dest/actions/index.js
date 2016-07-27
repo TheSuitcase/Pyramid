@@ -36,13 +36,13 @@ var _error = require('./defaults/error');
 
 var _error2 = _interopRequireDefault(_error);
 
-var _autocomplete = require('./defaults/autocomplete');
-
-var _autocomplete2 = _interopRequireDefault(_autocomplete);
-
 var _help = require('./defaults/help');
 
 var _help2 = _interopRequireDefault(_help);
+
+var _input = require('./defaults/input');
+
+var _input2 = _interopRequireDefault(_input);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -56,8 +56,8 @@ var Actions = {
     wait: _wait2.default,
     confirm: _confirm2.default,
     checkbox: _checkbox2.default,
-    autocomplete: _autocomplete2.default,
-    help: _help2.default
+    help: _help2.default,
+    input: _input2.default
   },
   collectIrremovableActions: function collectIrremovableActions() {
     this.irremovable = Object.keys(this.actions);

@@ -56,7 +56,7 @@ var Action = (function () {
         args[_key] = arguments[_key];
       }
 
-      _renderengine2.default.setResponse(args);
+      _renderengine2.default.setResponse.apply(_renderengine2.default, args);
     }
   }]);
 

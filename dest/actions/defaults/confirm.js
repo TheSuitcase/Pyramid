@@ -47,7 +47,6 @@ var Confirm = (function (_Action) {
     key: 'componentDidUnmount',
     value: function componentDidUnmount() {
       this.setResponse(this.state.confirm);
-      clearInterval(this.interval);
     }
   }, {
     key: 'userInputDidUpdate',

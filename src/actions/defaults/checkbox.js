@@ -11,18 +11,6 @@ class Checkbox extends Action {
       checked: -1,
     }
   }
-  userInputDidUpdate (char) {
-    if (char === -1) { return }
-    char = char.toLowerCase()
-
-    if (char === 'y') {
-      this.setState({confirm: true})
-    }else if (char === 'n') {
-      this.setState({confirm: false})
-    }
-
-    this.input.clear()
-  }
   userInputDidFireEvent (event) {
     let position = this.state.position
 
@@ -50,7 +38,7 @@ class Checkbox extends Action {
   renderItems () {
     let items = []
 
-    this.props.forEach((item, pos) => {
+    this.props[1].forEach((item, pos) => {
       items.push([
         '- [',
         State.colors.default(this.state.position === pos ? 'x' : ' '),
@@ -63,12 +51,13 @@ class Checkbox extends Action {
   }
   render () {
     let output = [
-      this.getDelimiter() + 'Checkboxes: (Use your `up` and `down` keys to navigate)',
+      this.getDelimiter() + `${this.props[0]}: `,
+      Colors.gray(`(Use your 'up' and 'down' keys to navigate)`),
     ]
 
     output = output.concat(this.renderItems())
 
-    return this.state.exit ? this.getDelimiter() + 'Checkboxes: ' + State.colors.default(this.props[this.state.position]) : output
+    return this.state.exit ? this.getDelimiter() + `${this.props[0]}: ` + State.colors.default(this.props[1][this.state.position]) : output
   }
 }
 

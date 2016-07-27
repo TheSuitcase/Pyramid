@@ -67,8 +67,8 @@ let RenderEngine = {
     Screen.exit(RenderEngine.exitOnFirstRender ? false : true)
   },
 
-  setResponse(response = []) {
-    RE.response = response
+  setResponse(...args) {
+    RE.response = args
   },
 
   setAction() {

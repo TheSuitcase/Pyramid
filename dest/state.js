@@ -41,7 +41,7 @@ exports.default = new _state2.default({
   autocomplete: false,
   version: '0.0.0',
 
-  delimiters: {
+  delimiter: {
     default: '',
     error: undefined,
     success: undefined,

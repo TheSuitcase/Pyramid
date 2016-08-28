@@ -1,196 +1,199 @@
-import Screen from './screen'
-import State from '../state'
-import Input from './input'
-import Keyboard from './keyboard'
-import Typeof from '../util/typeof'
-import CliWidth from 'cli-width'
-import StringWidth from 'string-width'
-import ScreenManager from './screenmanager'
-import Readline from './readline'
-import Colors from '../colors'
+import EventEmitter from 'events';
+import Readline from './readline';
+import Keyboard from './keyboard';
+import _ from 'underscore';
+import State from '../state';
+import Input from './input';
 
-let RenderEngine = {
-  rl: Readline,
-  screenManager: new ScreenManager(Readline),
-  lastOutput: [],
-  action: undefined,
-  listeners: {},
-  exitOnFirstRender: undefined,
-  previousActionDidExitOnFirstRender: undefined,
-  lastRenderWasWithScreenManager: false,
+import stringWidth from 'string-width';
+import stripAnsi from 'strip-ansi';
+import Screen from './screen';
 
-  response: undefined,
-  responses: [],
+// Setup.
+class RenderEngine extends EventEmitter{
+  constructor(queue){
+    super();
 
-  active: false,
+    this.queue = queue;
+    this.hasFinishedCycle = false;
+    this.listeners = {};
+    this.responses = [];
 
-  cb: undefined,
+    // The currently active action.
+    this.action = undefined; 
+
+    this.setupKeyboard();
+
+    process.nextTick(() => {
+      this.render();
+    });
+  }
 
   /*
-    Setups
+    Keyboard
    */
-  setupListeners() {
+  setupKeyboard(){
     this.listeners = {
-      keyboardDidFireChar: RenderEngine.keyboardDidFireChar.bind(this),
-      keyboardDidFireEvent: RenderEngine.keyboardDidFireEvent.bind(this)
-    }
-  },
-
-  setup() {
-    this.setupListeners()
-  },
-
-  start(cb) {
-    if (this.active) { return false; }
-    this.active = true
-    this.cb = cb
-    this.responses = []
-    // Start the whole process.
-    this.listen()
-
-    if (State.actions.queue.length === 0) {
-      cb()
-      return
+      keyboardDidFireChar: this.keyboardDidFireChar.bind(this),
+      keyboardDidFireEvent: this.keyboardDidFireEvent.bind(this)
     }
 
-    this.render()
-    return true
-  },
+    // Fire up the keyboard.
+    Keyboard.on('char', this.listeners.keyboardDidFireChar.bind(this))
+    Keyboard.on('backspace', this.keyboardDidFireChar.bind(this))
+    Keyboard.on('event', this.keyboardDidFireEvent.bind(this))
+  }
 
-  finished() {
-    if (this.active === false) { return; }
-    this.active = false
-    if (this.cb) {
-      this.cb(this.responses)
-      return
-    }
-    Screen.exit(RenderEngine.exitOnFirstRender ? false : true)
-  },
+  keyboardDidFireChar(char){
+    if(!this.action){ return; }
+    if(!char){ char = -1; } // -1 means backspace!
 
-  setResponse(...args) {
-    RE.response = args
-  },
-
-  setAction() {
-    if (!State.actions.queue[0]) {
-      return
+    // Update the input
+    if (char === -1) {
+      this.action.input.pop()
+    } else {
+      this.action.input._data.push(char)
     }
 
-    let item = State.actions.queue.splice(0, 1)[0]
-    RE.action = new item.action()
-    RE.action.props = item.args || []
-    RE.action.input = new Input()
-    if (RE.action.componentDidMount) {
-      RE.action.componentDidMount()
+    // Notify the currently active action.
+    if (char && this.action.userInputDidUpdate) {
+      this.action.userInputDidUpdate(char)
     }
-  },
 
-  listen() {
-    Keyboard.on('char', this.listeners.keyboardDidFireChar)
-    Keyboard.on('backspace', this.keyboardDidFireChar)
-    Keyboard.on('event', this.keyboardDidFireEvent)
-  },
+    // Rerender action.
+    this.render();
+  }
 
   keyboardDidFireEvent(event) {
-    if (!RenderEngine.action) { return; }
-    if (RenderEngine.action && RenderEngine.action.userInputDidFireEvent) {
-      RenderEngine.action.userInputDidFireEvent(event)
-    }
-    RenderEngine.render(RenderEngine.action)
-  },
-  keyboardDidFireChar(char) {
-    if (!RenderEngine.action) { return; }
-    if (!char) { char = -1; } // -1 means backspace!
+    if(!this.action) { return; }
+    if(!event){ return; }
 
-    if (RenderEngine.action && RenderEngine.action.userInputDidUpdate) {
-      RenderEngine.action.userInputDidUpdate(char)
+    // Notify the currently active action.
+    if(this.action.keyboardDidFireEvent) {
+      this.action.keyboardDidFireEvent(event)
     }
 
-    if (char === -1) {
-      RenderEngine.action.input.pop()
-    } else {
-      RenderEngine.action.input._data.push(char)
-    }
-    RenderEngine.render(RenderEngine.action)
-  },
-  removeAction() {
-    if (!this.action) { return; }
-    if (this.action.componentDidUnmount) {
-      this.action.componentDidUnmount()
-    }
-    this.previousActionDidExitOnFirstRender = this.exitOnFirstRender ? true : false
-    this.exitOnFirstRender = undefined
-    this.lastOutput = []
+    // Rerender the action.
+    this.render()
+  }
 
-    if (this.response !== undefined) {
-      this.responses.push({type: this.action.constructor.name.toLowerCase(), response: this.response})
-    }
-    this.response = undefined
+  /*
+    Action
+   */
+  setAction(){
+    // Clear the current action.
+    if(this.action){ this.clearAction(); }
 
-    this.action = undefined
-  },
+    // Goto the new action.
+    if(this.queue.length === 0){ return; }
 
-  render(action) {
-    if (action !== this.action) {
-      return
+    let item = this.queue.splice(0,1)[0];
+    let _class = item.action;
+    let args = item.args;
+
+    // Create a new instance of the action.
+    this.action = new _class();
+    this.action.props = args;
+    this.action.input = new Input();
+
+    if(!this.action.render){
+      this.setAction();
     }
 
-    if (!RE.action) {
-      RE.setAction()
+    return this;
+  }
+
+  clearAction(){
+    if(!this.action){ return; }
+    if(this.action && this.action.actionDidUnmount){
+      this.action.actionDidUnmount();
+    }
+    this.responses.push(this.action.response);
+
+    delete this.action;
+  }
+
+  /*
+    Render
+   */
+  render(){
+
+    // Pre-render checks
+    if(!this.action || !this.action.render){
+      this.setAction();
     }
 
-    if (!RE.action) {
-      this.finished()
-      return
+    if(!this.action){
+      this.exit();
+      return;
     }
 
-    // Render new output
-    let output = RE.action.render()
-    if (Typeof(output, 'string')) {
+    // Clear lastknow output.
+    if(this.lastKnownOutput){
+      let lines = 0;
+
+      if(_.isArray(this.lastKnownOutput)){
+        lines = this.lastKnownOutput.length + 1;
+      }
+
+      Screen.clearLine(lines);
+    }
+    
+    // Start rendering...
+    let output = this.action.render();
+
+    if(_.isString(output)){
       output = [output]
-    }
-
-    if (!Typeof(output, 'array')) {
+    }else if(!_.isArray(output)){
       output = [output.toString()]
     }
 
-    RE.lastOutput = output
+    // Store the current output for later.
+    this.lastKnownOutput = output;
 
-    let exit = false
-    if (!RE.action.componentShouldExit) {
-      exit = true
-    }else if (RE.action.componentShouldExit() === true) {
-      exit = true
+    // // Check if we should exit this action.
+    let exit = false;
+    if(!this.action.actionShouldExit){
+      exit = true;
+    }else if(this.action.actionShouldExit() === true){
+      exit = true;
     }
 
-    if (exit && this.exitOnFirstRender === undefined) {
-      this.exitOnFirstRender = true
-    } else {
-      this.exitOnFirstRender = false
+    // // Exit if necessary.
+    if(exit && this.exitOnFirstRender === undefined){
+      this.exitOnFirstRender = true;
+    }else{
+      this.exitOnFirstRender = false;
     }
 
-    if (this.exitOnFirstRender === true) {
-      process.stdout.write(output.join('\n') + '\n')
-      RE.lastRenderWasWithScreenManager = false
-    } else if (exit) {
-      RE.screenManager.render(output.join('\n'))
-      if (RE.lastRenderWasWithScreenManager) {
-        console.log(' ')
-      }
-      RE.lastRenderWasWithScreenManager = false
-    } else {
-      RE.screenManager.render(output.join('\n'))
-      RE.lastRenderWasWithScreenManager = true
-    }
+    // // Prepend the delimiter to the output.
+    output.forEach((line) => {
+      process.stdin.write(State.delimiter + line);
+    })
 
-    if (exit) {
-      RE.removeAction()
-      RE.render()
+    // out
+    // process.stdin.write(output);
+    // if(output.length === 1){
+      process.stdin.write('\n')
+    // }
+
+    if(exit){
+      this.clearAction();
+      this.render();
     }
+  }
+
+  write(output){
+    process.stdout.write(output);
+  }
+
+  exit(){
+    if(this.hasFinishedCycle){ return; }
+    this.clearAction();
+    this.hasFinishedCycle = true;
+
+    this.emit('exit');
   }
 }
 
-var RE = RenderEngine
-RE.setup()
-
-export default RenderEngine
+export default RenderEngine;

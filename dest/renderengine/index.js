@@ -4,9 +4,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _screen = require('./screen');
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _screen2 = _interopRequireDefault(_screen);
+var _events = require('events');
+
+var _events2 = _interopRequireDefault(_events);
+
+var _readline = require('./readline');
+
+var _readline2 = _interopRequireDefault(_readline);
+
+var _keyboard = require('./keyboard');
+
+var _keyboard2 = _interopRequireDefault(_keyboard);
+
+var _underscore = require('underscore');
+
+var _underscore2 = _interopRequireDefault(_underscore);
 
 var _state = require('../state');
 
@@ -16,226 +30,250 @@ var _input = require('./input');
 
 var _input2 = _interopRequireDefault(_input);
 
-var _keyboard = require('./keyboard');
-
-var _keyboard2 = _interopRequireDefault(_keyboard);
-
-var _typeof = require('../util/typeof');
-
-var _typeof2 = _interopRequireDefault(_typeof);
-
-var _cliWidth = require('cli-width');
-
-var _cliWidth2 = _interopRequireDefault(_cliWidth);
-
 var _stringWidth = require('string-width');
 
 var _stringWidth2 = _interopRequireDefault(_stringWidth);
 
-var _screenmanager = require('./screenmanager');
+var _stripAnsi = require('strip-ansi');
 
-var _screenmanager2 = _interopRequireDefault(_screenmanager);
+var _stripAnsi2 = _interopRequireDefault(_stripAnsi);
 
-var _readline = require('./readline');
+var _screen = require('./screen');
 
-var _readline2 = _interopRequireDefault(_readline);
-
-var _colors = require('../colors');
-
-var _colors2 = _interopRequireDefault(_colors);
+var _screen2 = _interopRequireDefault(_screen);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var RenderEngine = {
-  rl: _readline2.default,
-  screenManager: new _screenmanager2.default(_readline2.default),
-  lastOutput: [],
-  action: undefined,
-  listeners: {},
-  exitOnFirstRender: undefined,
-  previousActionDidExitOnFirstRender: undefined,
-  lastRenderWasWithScreenManager: false,
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  response: undefined,
-  responses: [],
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-  active: false,
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-  cb: undefined,
+// Setup.
+
+var RenderEngine = (function (_EventEmitter) {
+  _inherits(RenderEngine, _EventEmitter);
+
+  function RenderEngine(queue) {
+    _classCallCheck(this, RenderEngine);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RenderEngine).call(this));
+
+    _this.queue = queue;
+    _this.hasFinishedCycle = false;
+    _this.listeners = {};
+    _this.responses = [];
+
+    // The currently active action.
+    _this.action = undefined;
+
+    _this.setupKeyboard();
+
+    process.nextTick(function () {
+      _this.render();
+    });
+    return _this;
+  }
 
   /*
-    Setups
+    Keyboard
    */
-  setupListeners: function setupListeners() {
-    this.listeners = {
-      keyboardDidFireChar: RenderEngine.keyboardDidFireChar.bind(this),
-      keyboardDidFireEvent: RenderEngine.keyboardDidFireEvent.bind(this)
-    };
-  },
-  setup: function setup() {
-    this.setupListeners();
-  },
-  start: function start(cb) {
-    if (this.active) {
-      return false;
-    }
-    this.active = true;
-    this.cb = cb;
-    this.responses = [];
-    // Start the whole process.
-    this.listen();
 
-    if (_state2.default.actions.queue.length === 0) {
-      cb();
-      return;
-    }
+  _createClass(RenderEngine, [{
+    key: 'setupKeyboard',
+    value: function setupKeyboard() {
+      this.listeners = {
+        keyboardDidFireChar: this.keyboardDidFireChar.bind(this),
+        keyboardDidFireEvent: this.keyboardDidFireEvent.bind(this)
+      };
 
-    this.render();
-    return true;
-  },
-  finished: function finished() {
-    if (this.active === false) {
-      return;
+      // Fire up the keyboard.
+      _keyboard2.default.on('char', this.listeners.keyboardDidFireChar.bind(this));
+      _keyboard2.default.on('backspace', this.keyboardDidFireChar.bind(this));
+      _keyboard2.default.on('event', this.keyboardDidFireEvent.bind(this));
     }
-    this.active = false;
-    if (this.cb) {
-      this.cb(this.responses);
-      return;
-    }
-    _screen2.default.exit(RenderEngine.exitOnFirstRender ? false : true);
-  },
-  setResponse: function setResponse() {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    RE.response = args;
-  },
-  setAction: function setAction() {
-    if (!_state2.default.actions.queue[0]) {
-      return;
-    }
-
-    var item = _state2.default.actions.queue.splice(0, 1)[0];
-    RE.action = new item.action();
-    RE.action.props = item.args || [];
-    RE.action.input = new _input2.default();
-    if (RE.action.componentDidMount) {
-      RE.action.componentDidMount();
-    }
-  },
-  listen: function listen() {
-    _keyboard2.default.on('char', this.listeners.keyboardDidFireChar);
-    _keyboard2.default.on('backspace', this.keyboardDidFireChar);
-    _keyboard2.default.on('event', this.keyboardDidFireEvent);
-  },
-  keyboardDidFireEvent: function keyboardDidFireEvent(event) {
-    if (!RenderEngine.action) {
-      return;
-    }
-    if (RenderEngine.action && RenderEngine.action.userInputDidFireEvent) {
-      RenderEngine.action.userInputDidFireEvent(event);
-    }
-    RenderEngine.render(RenderEngine.action);
-  },
-  keyboardDidFireChar: function keyboardDidFireChar(char) {
-    if (!RenderEngine.action) {
-      return;
-    }
-    if (!char) {
-      char = -1;
-    } // -1 means backspace!
-
-    if (RenderEngine.action && RenderEngine.action.userInputDidUpdate) {
-      RenderEngine.action.userInputDidUpdate(char);
-    }
-
-    if (char === -1) {
-      RenderEngine.action.input.pop();
-    } else {
-      RenderEngine.action.input._data.push(char);
-    }
-    RenderEngine.render(RenderEngine.action);
-  },
-  removeAction: function removeAction() {
-    if (!this.action) {
-      return;
-    }
-    if (this.action.componentDidUnmount) {
-      this.action.componentDidUnmount();
-    }
-    this.previousActionDidExitOnFirstRender = this.exitOnFirstRender ? true : false;
-    this.exitOnFirstRender = undefined;
-    this.lastOutput = [];
-
-    if (this.response !== undefined) {
-      this.responses.push({ type: this.action.constructor.name.toLowerCase(), response: this.response });
-    }
-    this.response = undefined;
-
-    this.action = undefined;
-  },
-  render: function render(action) {
-    if (action !== this.action) {
-      return;
-    }
-
-    if (!RE.action) {
-      RE.setAction();
-    }
-
-    if (!RE.action) {
-      this.finished();
-      return;
-    }
-
-    // Render new output
-    var output = RE.action.render();
-    if ((0, _typeof2.default)(output, 'string')) {
-      output = [output];
-    }
-
-    if (!(0, _typeof2.default)(output, 'array')) {
-      output = [output.toString()];
-    }
-
-    RE.lastOutput = output;
-
-    var exit = false;
-    if (!RE.action.componentShouldExit) {
-      exit = true;
-    } else if (RE.action.componentShouldExit() === true) {
-      exit = true;
-    }
-
-    if (exit && this.exitOnFirstRender === undefined) {
-      this.exitOnFirstRender = true;
-    } else {
-      this.exitOnFirstRender = false;
-    }
-
-    if (this.exitOnFirstRender === true) {
-      process.stdout.write(output.join('\n') + '\n');
-      RE.lastRenderWasWithScreenManager = false;
-    } else if (exit) {
-      RE.screenManager.render(output.join('\n'));
-      if (RE.lastRenderWasWithScreenManager) {
-        console.log(' ');
+  }, {
+    key: 'keyboardDidFireChar',
+    value: function keyboardDidFireChar(char) {
+      if (!this.action) {
+        return;
       }
-      RE.lastRenderWasWithScreenManager = false;
-    } else {
-      RE.screenManager.render(output.join('\n'));
-      RE.lastRenderWasWithScreenManager = true;
+      if (!char) {
+        char = -1;
+      } // -1 means backspace!
+
+      // Update the input
+      if (char === -1) {
+        this.action.input.pop();
+      } else {
+        this.action.input._data.push(char);
+      }
+
+      // Notify the currently active action.
+      if (char && this.action.userInputDidUpdate) {
+        this.action.userInputDidUpdate(char);
+      }
+
+      // Rerender action.
+      this.render();
+    }
+  }, {
+    key: 'keyboardDidFireEvent',
+    value: function keyboardDidFireEvent(event) {
+      if (!this.action) {
+        return;
+      }
+      if (!event) {
+        return;
+      }
+
+      // Notify the currently active action.
+      if (this.action.keyboardDidFireEvent) {
+        this.action.keyboardDidFireEvent(event);
+      }
+
+      // Rerender the action.
+      this.render();
     }
 
-    if (exit) {
-      RE.removeAction();
-      RE.render();
-    }
-  }
-};
+    /*
+      Action
+     */
 
-var RE = RenderEngine;
-RE.setup();
+  }, {
+    key: 'setAction',
+    value: function setAction() {
+      // Clear the current action.
+      if (this.action) {
+        this.clearAction();
+      }
+
+      // Goto the new action.
+      if (this.queue.length === 0) {
+        return;
+      }
+
+      var item = this.queue.splice(0, 1)[0];
+      var _class = item.action;
+      var args = item.args;
+
+      // Create a new instance of the action.
+      this.action = new _class();
+      this.action.props = args;
+      this.action.input = new _input2.default();
+
+      if (!this.action.render) {
+        this.setAction();
+      }
+
+      return this;
+    }
+  }, {
+    key: 'clearAction',
+    value: function clearAction() {
+      if (!this.action) {
+        return;
+      }
+      if (this.action && this.action.actionDidUnmount) {
+        this.action.actionDidUnmount();
+      }
+      this.responses.push(this.action.response);
+
+      delete this.action;
+    }
+
+    /*
+      Render
+     */
+
+  }, {
+    key: 'render',
+    value: function render() {
+
+      // Pre-render checks
+      if (!this.action || !this.action.render) {
+        this.setAction();
+      }
+
+      if (!this.action) {
+        this.exit();
+        return;
+      }
+
+      // Clear lastknow output.
+      if (this.lastKnownOutput) {
+        var lines = 0;
+
+        if (_underscore2.default.isArray(this.lastKnownOutput)) {
+          lines = this.lastKnownOutput.length + 1;
+        }
+
+        _screen2.default.clearLine(lines);
+      }
+
+      // Start rendering...
+      var output = this.action.render();
+
+      if (_underscore2.default.isString(output)) {
+        output = [output];
+      } else if (!_underscore2.default.isArray(output)) {
+        output = [output.toString()];
+      }
+
+      // Store the current output for later.
+      this.lastKnownOutput = output;
+
+      // // Check if we should exit this action.
+      var exit = false;
+      if (!this.action.actionShouldExit) {
+        exit = true;
+      } else if (this.action.actionShouldExit() === true) {
+        exit = true;
+      }
+
+      // // Exit if necessary.
+      if (exit && this.exitOnFirstRender === undefined) {
+        this.exitOnFirstRender = true;
+      } else {
+        this.exitOnFirstRender = false;
+      }
+
+      // // Prepend the delimiter to the output.
+      output.forEach(function (line) {
+        process.stdin.write(_state2.default.delimiter + line);
+      });
+
+      // out
+      // process.stdin.write(output);
+      // if(output.length === 1){
+      process.stdin.write('\n');
+      // }
+
+      if (exit) {
+        this.clearAction();
+        this.render();
+      }
+    }
+  }, {
+    key: 'write',
+    value: function write(output) {
+      process.stdout.write(output);
+    }
+  }, {
+    key: 'exit',
+    value: function exit() {
+      if (this.hasFinishedCycle) {
+        return;
+      }
+      this.clearAction();
+      this.hasFinishedCycle = true;
+
+      this.emit('exit');
+    }
+  }]);
+
+  return RenderEngine;
+})(_events2.default);
 
 exports.default = RenderEngine;

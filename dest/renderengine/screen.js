@@ -86,19 +86,19 @@ var Screen = {
   exit: function exit() {
     var extraline = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-    // Note: Readline.output does not work
-    // therefore we use process.stdout
-    if (_index2.default.lastRenderWasWithScreenManager) {
-      process.stdout.write('\n');
-    }
+    // // Note: Readline.output does not work
+    // // therefore we use process.stdout
+    // if (RenderEngine.lastRenderWasWithScreenManager) {
+    //   process.stdout.write('\n')
+    // }
 
-    if (_state2.default.command && _state2.default.command.state.callbacks.exit) {
-      _state2.default.command.state.callbacks.exit();
-    }
+    // if (State.command && State.command.state.callbacks.exit) {
+    //   State.command.state.callbacks.exit()
+    // }
 
-    if (_state2.default.callbacks.exit) {
-      _state2.default.callbacks.exit();
-    }
+    // if (State.callbacks.exit) {
+    //   State.callbacks.exit()
+    // }
 
     process.exit();
   }

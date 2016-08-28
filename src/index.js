@@ -1,9 +1,9 @@
-// import Colors from './colors'
-// import Delimiter from './delimiter'
+import Pyramid from './pyramid';
+import Runtime from './runtime';
 
-// import State from './state'
+// Parse.
+Pyramid.parse = () => {
+  Runtime.start();
+}
 
-import Pyramid from './Pyramid'
-
-export default Pyramid
-module.exports = Pyramid
+export default Pyramid;

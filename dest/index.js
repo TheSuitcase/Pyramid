@@ -4,15 +4,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _Pyramid = require('./Pyramid');
+var _pyramid = require('./pyramid');
 
-var _Pyramid2 = _interopRequireDefault(_Pyramid);
+var _pyramid2 = _interopRequireDefault(_pyramid);
+
+var _runtime = require('./runtime');
+
+var _runtime2 = _interopRequireDefault(_runtime);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-exports.default = _Pyramid2.default; // import Colors from './colors'
-// import Delimiter from './delimiter'
+// Parse.
+_pyramid2.default.parse = function () {
+  _runtime2.default.start();
+};
 
-// import State from './state'
-
-module.exports = _Pyramid2.default;
+exports.default = _pyramid2.default;

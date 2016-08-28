@@ -1,122 +1,83 @@
-import Action from './actions/action'
-import State from './state'
-import Util from 'util'
-import TypeOf from './util/typeof'
-import Command from './command'
-import Actions from './actions'
-import Executer from './executer'
-import Colors from './colors'
+import EventEmitter from 'eventemitter3';
+import _ from 'underscore';
+import Debug from './debug';
+import State from './state';
+import Command from './command';
+import ActionCenter from './actioncenter';
+import Queue from './queue';
+
+let ee = new EventEmitter();
 
 let Pyramid = {
-  Action, State,
-  colors: Colors,
+  on: ee.on.bind(ee),
 
-  version(version = '0.0.0') {
-    if (!TypeOf(version, 'string')) { return this; }
-    State.set({version})
-    return this
-  },
-
-  welcome(message) {
-    if (!TypeOf(message, 'string', 'array', 'undefined')) { return this; }
-    State.set({welcome: message})
-    return this
-  },
-
-  goodby(message) {
-    if (!TypeOf(message, 'string', 'array', 'undefined')) { return this; }
-    State.set({goodby: message})
-    return this
-  },
-
-  color(colors) {
-    if (TypeOf(colors, 'string')) {
-      State.set({colors: {
-          default: colors
-      }})
-      return this
+   /**
+   * Set the debug mode. Disabled by default.
+   * @param  {Boolean} bool - True = enabled, false = disabled
+   * @default true
+   */
+  debug(bool = true){
+    if(!_.isBoolean(bool)){
+      Debug.error('[pyramid.debug] The argument should be a boolean!');
+      return this;
     }
 
-    if (!TypeOf(colors, 'object')) { return this; }
+    State.debugging = bool;
+    return this;
+  },
 
-    for (let i in colors) {
-      if (!Typeof(i, 'function')) {
-        delete colors[i]
-      }
+  /**
+   * Set the version for the cli.
+   * @param  {String} version - The version number.
+   */
+  version(version = '0.0.0'){
+    if(!_.isString(version)){
+      Debug.error('[pyramid.version] The version should be a string!')
+      return this;
     }
 
-    State.set({colors})
-    return this
+    State.version = version;
+    return this;
   },
 
-  delimiter(delimiter) {
-    if (TypeOf(delimiter, 'string')) {
-      State.set({delimiter: {
-          default: delimiter
-      }})
-      return this
+  /**
+   * Set the delimiter.
+   * @param  {String} delimiter - The delimiter.
+   */
+  delimiter(delimiter){
+    if(!_.isString(delimiter)){
+      Debug.error('[pyramid.delmiter] The delmiter must be a string!');
+      return this;
     }
 
-    if (!TypeOf(delimiter, 'object')) { return this}
-
-    // Only strings are allowed.
-    for (let i in delimiter) {
-      if (!Typeof(i, 'string')) {
-        delete delimiter[i]
-      }
+    // Append a space.
+    if(delimiter[delimiter.length -1] != ' '){
+      delimiter += ' ';
     }
 
-    State.set({delimiter})
-    return this
+    State.delimiter = delimiter;
+    return this;
   },
 
-  command(command) {
-    if (!TypeOf(command, 'string')) { return }
-    return State.commands[command] = new Command(command)
-  },
+  /**
+   * Create a new command.
+   * @param  {String} command - The command.
+   * @return {Command}         
+   */
+  command(command){
+    if(!_.isString(command)){
+      Debug.error('[pyramid.command] The command must be a string!');
+      return this;
+    }
 
-  addAction(...args) {
-    Actions.add.apply(Actions, args)
-    return this
-  },
-
-  removeAction(...args) {
-    Actions.remove.apply(Actions, args)
-    return this
-  },
-
-  // Callbacks.
-  action(cb) {
-    if (!TypeOf(cb, 'function')) { return }
-    State.callbacks.action = cb
-    return this
-  },
-
-  validate(cb) {
-    if (!TypeOf(cb, 'function')) { return }
-    State.callbacks.validate = cb
-    return this
-  },
-
-  exit(cb) {
-    if (!TypeOf(cb, 'function')) { return }
-    State.callbacks.exit = cb
-    return this
-  },
-
-  overflow(cb) {
-    if (!TypeOf(cb, 'function')) { return }
-    State.callbacks.overflow = cb
-    return this
-  },
-
-  parse() {
-    Executer.parse.apply(Executer, arguments)
-    return this
+    // Create and set.
+    let _c = new Command(command);
+    State.commands[command] = _c;
+    return _c;
   }
+};
 
-}
+ActionCenter.merge(Pyramid, Queue);
 
-Actions.merge(Pyramid, State.actions)
-
-export default Pyramid
+export default Pyramid;
+module.exports = Pyramid;
